@@ -12,15 +12,15 @@ import(BiocGenerics)
 import(S4Vectors)
 import(IRanges)
 import(GenomeInfoDb)
+import(AnnotationDbi)
 import(GenomicRanges)
 import(GenomicFeatures)
 
 importFrom(Biobase, createPackage)
 importClassesFrom(BiocIO, BiocFile, CompressedFile)
-importFrom(BiocIO, FileForFormat)
-importFrom(rtracklayer, import, asGFF, browserSession,
-                        ucscTableQuery, tableNames, getTable, trackNames,
-                        ucscSchema, ucscTables)
+importFrom(BiocIO, import, FileForFormat)
+importFrom(rtracklayer, browserSession, trackNames, ucscTables,
+                        ucscTableQuery, getTable, ucscSchema)
 importFrom(biomaRt, getBM, listAttributes, listDatasets, listFilters,
                     listMarts, useDataset, useEnsembl, useEnsemblGenomes)
 

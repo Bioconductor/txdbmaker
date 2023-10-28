@@ -10,7 +10,7 @@ Description: A set of tools for making TxDb objects from genomic annotations
 biocViews: Genetics, Infrastructure, Annotation, Sequencing, GenomeAnnotation
 URL: https://bioconductor.org/packages/txdbmaker
 BugReports: https://github.com/Bioconductor/txdbmaker/issues
-Version: 0.0.0
+Version: 0.0.1
 License: Artistic-2.0
 Encoding: UTF-8
 Authors@R: c(
@@ -26,8 +26,23 @@ Authors@R: c(
 	person("S.", "Saini", role="ctb"),
 	person("L.", "Shepherd", role="ctb"))
 Depends: R (>= 4.4.0), BiocGenerics, S4Vectors, IRanges, GenomeInfoDb,
-	GenomicRanges, GenomicFeatures
+	AnnotationDbi, GenomicRanges, GenomicFeatures
 Imports: methods, utils, stats, tools, DBI, RSQLite (>= 2.0),
 	Biobase, BiocIO, rtracklayer, biomaRt
-Suggests: RMariaDB, ensembldb, RUnit, BiocStyle, knitr, markdown
+Suggests: RMariaDB, mirbase.db, ensembldb, RUnit, BiocStyle, knitr, markdown
 VignetteBuilder: knitr
+Collate: utils.R
+	UCSC-utils.R
+	Ensembl-utils.R
+	findCompatibleMarts.R
+	TxDb-schema.R
+	TxDb-CREATE-TABLE-helpers.R
+	makeTxDb.R
+	makeTxDbFromUCSC.R
+	makeTxDbFromBiomart.R
+	makeTxDbFromEnsembl.R
+	makeTxDbFromGRanges.R
+	makeTxDbFromGFF.R
+	makeFeatureDbFromUCSC.R
+	makeTxDbPackage.R
+	zzz.R
