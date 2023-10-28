@@ -148,8 +148,9 @@ recognizedBiomartAttribs <- function(id_prefix="ensembl_")
     if (!is.character(available_attribs))
         stop("invalid 'available_attribs' argument")
     recognized_attribs <- recognizedBiomartAttribs()
-    has_group <- sapply(recognized_attribs,
-                        function(attribs) all(attribs %in% available_attribs))
+    has_group <- vapply(recognized_attribs,
+                        function(attribs) all(attribs %in% available_attribs),
+                        logical(1))
     ans <- paste0(names(has_group)[has_group], collapse="+") 
     if (ans == "")
         ans <- "none"
@@ -171,7 +172,7 @@ recognizedBiomartAttribs <- function(id_prefix="ensembl_")
         available_attribs <- .get_attribs_for_each_dataset(
                                      available_attribs,
                                      length.out=length.out)
-    sapply(available_attribs, .find_available_attrib_groups)
+    vapply(available_attribs, .find_available_attrib_groups, character(1))
 }
 
 ### 'biomart' and 'version' must be single character strings.

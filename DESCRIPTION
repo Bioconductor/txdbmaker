@@ -7,10 +7,11 @@ Description: A set of tools for making TxDb objects from genomic annotations
 	object. TxDb objects are implemented in the GenomicFeatures package,
 	together with flexible methods for extracting the desired features in
 	convenient formats.
-biocViews: Genetics, Infrastructure, Annotation, Sequencing, GenomeAnnotation
+biocViews: Infrastructure, DataImport, Annotation, GenomeAnnotation,
+	GenomeAssembly, Genetics, Sequencing
 URL: https://bioconductor.org/packages/txdbmaker
 BugReports: https://github.com/Bioconductor/txdbmaker/issues
-Version: 0.0.3
+Version: 0.0.4
 License: Artistic-2.0
 Encoding: UTF-8
 Authors@R: c(

@@ -796,7 +796,7 @@ browseUCSCtrack <- function(genome="hg19",
                      ucsc_txtable$cdsStart, ucsc_txtable$cdsEnd,
                      ucsc_txtable$exonStarts, ucsc_txtable$exonEnds,
                      ucsc_txtable$name)
-    bad <- sapply(start_end, "[[", 3L)
+    bad <- vapply(start_end, function(x) x[[3L]], logical(1))
     if (any(bad)) {
         bad_cds <- ucsc_txtable$name[bad]
         msg <- sprintf("UCSC data anomaly in %d transcript(s):
@@ -805,8 +805,8 @@ browseUCSCtrack <- function(genome="hg19",
             paste(sQuote(bad_cds), collapse=" "))
         warning(wmsg(paste(strwrap(msg, exdent=2L), collapse="\n")))
     }
-    list(start=sapply(start_end, "[[", 1L),
-         end=sapply(start_end, "[[", 2L))
+    list(start=lapply(start_end, `[[`, 1L),
+         end  =lapply(start_end, `[[`, 2L))
 }
 
 .extract_splicings_from_UCSC_txtable <- function(ucsc_txtable,

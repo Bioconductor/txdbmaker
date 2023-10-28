@@ -138,7 +138,7 @@ isGoodTrack <- function(track, session){
 
 ## helper to detect and generate a list of "legitimate" tracks
 makeWhiteList <- function(session, trx){
-  sapply(trx, isGoodTrack, session)
+  vapply(trx, function(x) isGoodTrack(x, session), logical(1))
 }
 
 ## Discovery for supported Tracks
@@ -159,7 +159,8 @@ supportedUCSCFeatureDbTables <- function(genome, track)
   if(length(tables)){
     tables
   }else{
-    stop("The track provided does not contain tables that are available in tabular form.")
+    stop(wmsg("The track provided does not contain tables ",
+              "that are available in tabular form."))
   }
 }
 
@@ -229,7 +230,7 @@ makeFeatureDb <- function(data, tableName, columns, metadata=NULL, ...)
 makeFeatureDbFromUCSC <- function(genome,
          track,
          tablename,
-         columns = UCSCFeatureDbTableSchema(genome, track, tablename),
+         columns=UCSCFeatureDbTableSchema(genome, track, tablename),
          url="https://genome.ucsc.edu/cgi-bin/",
          goldenPath.url=getOption("UCSC.goldenPath.url"),
          chromCol=NULL,
@@ -319,7 +320,7 @@ makeFeatureDbFromUCSC <- function(genome,
 
     ## then make our table, but remember, we have to add new columns to our
     ## base table type 1st:
-    .UCSC_GENERICCOL2CLASS = c(.UCSC_GENERICCOL2CLASS, columns)
+    .UCSC_GENERICCOL2CLASS <- c(.UCSC_GENERICCOL2CLASS, columns)
     ucsc_table <- setDataFrameColClass(ucsc_table ,.UCSC_GENERICCOL2CLASS,
                                        drop.extra.cols=TRUE)
     ## ensure that the table columns conform to expectations

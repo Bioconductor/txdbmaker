@@ -230,7 +230,7 @@ all(transcripts(yeast_txdb) \%in\% transcripts(yeast_txdb0))
 ## requested data takes more than 1 min to download. This unfortunately
 ## happens with the example below so we don't try to run it for now.
 
-\dontrun{
+\donttest{
   mart <- useEnsemblGenomes(biomart="metazoa_mart")
   datasets <- listDatasets(mart)
   datasets$dataset
@@ -254,7 +254,7 @@ all(transcripts(yeast_txdb) \%in\% transcripts(yeast_txdb0))
 ## doesn't seem to support requests that take more than 1 min either.
 ## So we don't try to run the example below for now.
 
-\dontrun{
+\donttest{
 mart <- useEnsemblGenomes(biomart="plants_mart")
 datasets <- listDatasets(mart)
 datasets[ , 1:2]

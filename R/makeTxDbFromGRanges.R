@@ -1559,9 +1559,9 @@ test_makeTxDbFromGRanges_on_Ensembl_gtf <- function(all=FALSE)
 
 
 if (FALSE) {
-library(txdbmaker)
+#library(txdbmaker)
 source("txdbmaker/R/makeTxDbFromGRanges.R")
-library(rtracklayer)
+#library(rtracklayer)
 
 ## Test with GRanges obtained from GFF3 files
 ## ==========================================

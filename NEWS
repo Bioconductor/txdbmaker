@@ -1,0 +1,26 @@
+VERSION 1.0.0
+-------------
+
+    o The txdbmaker package is a spin-off from the GenomicFeatures package.
+      It includes the following functions, all of them originally from the
+      GenomicFeatures package:
+        - browseUCSCtrack
+        - getChromInfoFromBiomart
+        - makeFDbPackageFromUCSC
+        - makeFeatureDbFromUCSC
+        - makePackageName
+        - makeTxDb
+        - makeTxDbFromBiomart
+        - makeTxDbFromEnsembl
+        - makeTxDbFromGFF
+        - makeTxDbFromGRanges
+        - makeTxDbFromUCSC
+        - makeTxDbPackage
+        - makeTxDbPackageFromBiomart
+        - makeTxDbPackageFromUCSC
+        - supportedMiRBaseBuildValues
+        - supportedUCSCFeatureDbTables
+        - supportedUCSCFeatureDbTracks
+        - supportedUCSCtables
+        - UCSCFeatureDbTableSchema
+

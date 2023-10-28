@@ -12,8 +12,8 @@
 .abbrevOrganismName <- function(organism){
   spc <- unlist(strsplit(organism, " "))
   if(length(spc)<2){
-      stop(strwrap(paste0("Organism should have a genus and species separated",
-                          " by a space,")))}
+      stop(wmsg("Organism should have a genus and species separated ",
+                "by a space"))}
   if(length(spc)==2){
       res <- paste0( substr(spc[[1]], 1, 1), spc[[2]])
   }
@@ -195,7 +195,7 @@ makeTxDbPackage <- function(txdb,
        stop("'symvals' contains duplicated symbols")
    }
    ## All symvals should by single strings (non-NA)
-   is_OK <- sapply(symvals, isSingleString)
+   is_OK <- vapply(symvals, isSingleString, logical(1))
    if (!all(is_OK)) {
        bad_syms <- paste(names(is_OK)[!is_OK], collapse=", ")
        stop("values for symbols ", bad_syms, " are not single strings")
@@ -222,11 +222,14 @@ makeTxDbPackage <- function(txdb,
 ## To handle 40 of the same warning: withCallingHandlers()
 ## elaborate example of how to do a good job of wrangling multiple warnings()
 
-## library(txdbmaker);txdb <- makeTxDbPackageFromUCSC(version='1', author="me", maintainer="you',genome = 'mm9', tablename = 'refGene')
+## library(txdbmaker)
+## txdb <- makeTxDbPackageFromUCSC(version='1', author="me", maintainer="you',
+##                                 genome='mm9', tablename='refGene')
 
 ## THIS STILL DOESN'T WORK RIGHT!
 ## IOW THIS FAILS
-## txdb <- makeTxDbPackageFromUCSC(version="1.0", genome = 'mm9', tablename = 'refGene')
+## txdb <- makeTxDbPackageFromUCSC(version="1.0",
+##                                 genome='mm9', tablename='refGene')
 
 makeTxDbPackageFromUCSC <- function(
   version,
@@ -265,7 +268,8 @@ makeTxDbPackageFromUCSC <- function(
         stop("'tablename' must be supplied as a single element",
              " character vector.")}
     if(is.null(circ_seqs)) {
-        warning("Circular chromosomes were automatically inferred.\n", call. = FALSE)
+        warning("Circular chromosomes were automatically inferred.\n",
+                call.=FALSE)
     }
     if(is.character(circ_seqs) && length(circ_seqs)<1){
         stop("'circ_seqs' must be supplied as a named character vector.")}
@@ -374,7 +378,7 @@ makeFDbPackageFromUCSC <- function(
     genome="hg19",
     track="tRNAs",
     tablename="tRNAs",
-    columns = UCSCFeatureDbTableSchema(genome, track, tablename),
+    columns=UCSCFeatureDbTableSchema(genome, track, tablename),
     url="https://genome.ucsc.edu/cgi-bin/",
     goldenPath.url=getOption("UCSC.goldenPath.url"),
     chromCol=NULL,

@@ -1,0 +1,146 @@
+---
+title: "Making TxDb Objects"
+author:
+- name: Marc Carlson
+- name: Patrick Aboyoun
+- name: Hervé Pagès
+- name: Seth Falcon
+- name: Martin Morgan
+date: "Compiled `r doc_date()`;  Modified 28 Oct 023"
+package: txdbmaker
+vignette: |
+  %\VignetteIndexEntry{Making TxDb Objects}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteKeywords{annotation, database}
+output:
+  BiocStyle::html_document
+---
+
+
+# Introduction
+
+The `txdbmaker` package provides functions to make `TxDb`
+objects based on data downloaded from the UCSC Genome Browser
+(https://genome.ucsc.edu/), Ensembl (https://ensembl.org/), or
+BioMart (http://www.biomart.org/), or directly from a GFF or GTF file.
+
+See the vignette in the `GenomicFeatures` package for an
+introduction to `TxDb` objects.
+
+The following subsections demonstrate the use of these functions.
+There is also support for creating `TxDb` objects from custom data
+sources using `makeTxDb`; see the help page for this function for
+details.
+
+```{r loadtxdbmaker}
+suppressPackageStartupMessages(library(txdbmaker))
+```
+
+
+# Using `makeTxDbFromUCSC`
+
+The function `makeTxDbFromUCSC` downloads UCSC
+Genome Bioinformatics transcript tables (e.g. `knownGene`,
+`refGene`, `ensGene`) for a genome build (e.g.
+`mm9`, `hg19`).  Use the `supportedUCSCtables`
+utility function to get the list of tables known to work with
+`makeTxDbFromUCSC`.
+
+```{r supportedUCSCtables}
+supportedUCSCtables(genome="mm9")
+
+mm9KG_txdb <- makeTxDbFromUCSC(genome="mm9", tablename="knownGene")
+mm9KG_txdb
+```
+
+
+# Using `makeTxDbFromBiomart`
+
+Retrieve data from BioMart by specifying the mart and the data set to
+the `makeTxDbFromBiomart` function (not all BioMart
+data sets are currently supported):
+
+```{r makeTxDbFromBiomart, eval=FALSE}
+mmusculusEnsembl <- makeTxDbFromBiomart(dataset="mmusculus_gene_ensembl")
+```
+
+As with the `makeTxDbFromUCSC` function, the
+`makeTxDbFromBiomart` function also has a
+`circ_seqs` argument that will default to using the contents
+of the `DEFAULT_CIRC_SEQS` vector.  And just like those UCSC
+sources, there is also a helper function called
+`getChromInfoFromBiomart` that can show what the different
+chromosomes are called for a given source.
+
+Using the `makeTxDbFromBiomart`
+`makeTxDbFromUCSC` functions can take a while and
+may also require some bandwidth as these methods have to download and
+then assemble a database from their respective sources.  It is not
+expected that most users will want to do this step every time.
+Instead, we suggest that you save your annotation objects and label
+them with an appropriate time stamp so as to facilitate reproducible
+research.
+
+
+# Using `makeTxDbFromEnsembl`
+
+The `makeTxDbFromEnsembl` function creates a `TxDb` object
+for a given organism by importing the genomic locations of its transcripts,
+exons, CDS, and genes from an Ensembl database.
+
+See `?makeTxDbFromEnsembl` for more information.
+
+
+# Using `makeTxDbFromGFF`
+
+You can also extract transcript information from either GFF3 or GTF
+files by using the `makeTxDbFromGFF` function.
+Usage is similar to `makeTxDbFromBiomart` and
+`makeTxDbFromUCSC`.
+
+
+# Saving and Loading a `TxDb` Object
+
+Once a `TxDb` object has been created, it can be saved
+to avoid the time and bandwidth costs of recreating it and to make it
+possible to reproduce results with identical genomic feature data at a
+later date.  Since `TxDb` objects are backed by a
+SQLite database, the save format is a SQLite database file (which
+could be accessed from programs other than R if desired).  Note that
+it is not possible to serialize a `TxDb` object using
+R's `save` function.
+
+```{r saveDb, results="hide"}
+saveDb(mm9KG_txdb, file="mm9KG_txdb.sqlite")
+```
+
+And as was mentioned earlier, a saved `TxDb` object can
+be initialized from a .sqlite file by simply using `loadDb`.
+
+```{r loadDb}
+mm9KG_txdb <- loadDb("mm9KG_txdb.sqlite")
+```
+
+
+# Using `makeTxDbPackageFromUCSC` and `makeTxDbPackageFromBiomart`
+
+It is often much more convenient to just make an annotation package
+out of your annotations.  If you are finding that this is the case,
+then you should consider the convenience functions:
+`makeTxDbPackageFromUCSC` and
+`makeTxDbPackageFromBiomart`.  These functions are similar
+to `makeTxDbFromUCSC` and
+`makeTxDbFromBiomart` except that they will take the
+extra step of actually wrapping the database up into an annotation
+package for you.  This package can then be installed and used as of
+the standard TxDb packages found on in the Bioconductor
+repository.
+
+
+# Session Information
+
+```{r SessionInfo, echo=FALSE}
+sessionInfo()
+```
+

@@ -1,0 +1,4 @@
+o makeTxDbFromUCSC() - Address the CDS non-completeness issue.
+  The status of the CDS (complete or not) can be inferred from the
+  cds*Stat field (when present) of the UCSC table.
+

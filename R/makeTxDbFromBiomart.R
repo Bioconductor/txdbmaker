@@ -17,7 +17,7 @@
 ###
 
 .isEnsemblMirror <- function(host) {
-    hostadd <- gsub("http[s]*://", "", host, ignore.case = TRUE)
+    hostadd <- gsub("http[s]*://", "", host, ignore.case=TRUE)
     domain <- vapply(strsplit(hostadd, "\\."), `[[`, character(1L), 1L)
     ## capture known hosts
     tolower(domain) %in% c("useast", "uswest", "asia", "www", "ensembl")
@@ -44,7 +44,7 @@
     if (!(isSingleString(host) && host != ""))
         stop("'host' must be a single non-empty string")
     if (.isEnsemblMirror(host))
-        useEnsembl(biomart = biomart, dataset = dataset, host = host)
+        useEnsembl(biomart=biomart, dataset=dataset, host=host)
     else
         useEnsemblGenomes(biomart=biomart, dataset=dataset)
 }
@@ -66,9 +66,9 @@
         stop("names on 'filter' cannot be NA or the empty string")
     if (anyDuplicated(filter_names))
         stop("names on 'filter' must be unique")
-    if (!all(sapply(filter, is.atomic)))
+    if (!all(vapply(filter, is.atomic, logical(1))))
         stop("'filter' list elements must be atomic")
-    if (any(sapply(filter, anyNA)))
+    if (any(vapply(filter, anyNA, logical(1))))
         stop("'filter' list elements cannot contain NAs")
     filter
 }
@@ -124,7 +124,7 @@
 
 .getBiomartDbVersion <- function(host, biomart)
 {
-    marts <- listMarts(host = host)
+    marts <- listMarts(host=host)
 
     mart_rowidx <- match(biomart, marts[["biomart"]])
     ## This should never happen.
@@ -136,7 +136,10 @@
 .get_Ensembl_release_from_db_version <- function(db_version)
 {
     db_version <- tolower(db_version)
-    sub("^ensembl( ((bacteria|fungi|metazoa|plants|protists) )?genes)? ([0-9]+).*$", "\\4", db_version)
+    divisions <- c("bacteria", "fungi", "metazoa", "plants", "protists")
+    pattern <- sprintf("^ensembl( ((%s) )?genes)? ([0-9]+).*$",
+                       paste(divisions, collapse="|"))
+    sub(pattern, "\\4", db_version)
 }
 
 .get_EnsemblGenomes_kingdom_from_biomart <- function(biomart)
@@ -234,7 +237,7 @@
         message("Download and preprocess the 'chrominfo' data frame ... ",
                 appendLF=FALSE)
         if (is_ensembl_mart) {
-            if (grepl("grch37.ensembl.org", host, ignore.case = TRUE)) {
+            if (grepl("grch37.ensembl.org", host, ignore.case=TRUE)) {
                 ## Ensembl GRCh37 mart
                 chromlengths <- try(fetchChromLengthsFromEnsembl(dataset,
                                         use.grch37=TRUE,
@@ -530,7 +533,7 @@ getChromInfoFromBiomart <- function(biomart="ENSEMBL_MART_ENSEMBL",
 
     tx_name_colname <- paste0(id_prefix, "transcript_id")
     tx_name <- bm_result[ , tx_name_colname]
-    cds_length2 <- sapply(split(width(cds_ranges), tx_name), sum)
+    cds_length2 <- vapply(split(width(cds_ranges), tx_name), sum, integer(1))
     cds_length2 <- cds_length2[as.character(tx_name)]
 
     cds_length <- bm_result$cds_length
@@ -650,8 +653,9 @@ getChromInfoFromBiomart <- function(biomart="ENSEMBL_MART_ENSEMBL",
     message("Download and preprocess the 'splicings' data frame ... ",
             appendLF=FALSE)
     available_attribs <- listAttributes(mart)$name
-    has_group <- sapply(recognized_attribs[c("E2", "C1", "C2", "D1", "D2")],
-                        function(attribs) all(attribs %in% available_attribs))
+    has_group <- vapply(recognized_attribs[c("E2", "C1", "C2", "D1", "D2")],
+                        function(attribs) all(attribs %in% available_attribs),
+                        logical(1))
     get_groups <- c("E1", names(has_group)[has_group])
     attributes <- unlist(recognized_attribs[get_groups], use.names=FALSE)
     bm_result <- .getBM2(attributes, filter, mart=mart, bmHeader=FALSE)

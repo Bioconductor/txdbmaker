@@ -92,9 +92,7 @@ makeTxDbFromEnsembl(organism="Homo sapiens",
 }
 
 \examples{
-\dontrun{
 txdb <- makeTxDbFromEnsembl("Saccharomyces cerevisiae",
                             server="useastdb.ensembl.org")
 txdb
-}
 }

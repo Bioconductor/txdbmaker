@@ -218,7 +218,7 @@ supportedUCSCtables(genome="hg19")
 supportedMiRBaseBuildValues()
 
 ## Next are examples of actually building a package:
-\dontrun{
+\donttest{
 ## Makes a transcript package for Yeast from the ensGene table at UCSC:
 makeTxDbPackageFromUCSC(version="0.01",
                         maintainer="Some One <so@someplace.org>",
