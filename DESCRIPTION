@@ -1,0 +1,33 @@
+Package: txdbmaker
+Title: Tools for making TxDb objects from genomic annotations
+Description: A set of tools for making TxDb objects from genomic annotations
+	from various sources (e.g. UCSC, Ensembl, and GFF files). These tools
+	allow the user to download the genomic locations of transcripts,
+	exons, and CDS, for a given assembly, and to import them in a TxDb
+	object. TxDb objects are implemented in the GenomicFeatures package,
+	together with flexible methods for extracting the desired features in
+	convenient formats.
+biocViews: Genetics, Infrastructure, Annotation, Sequencing, GenomeAnnotation
+URL: https://bioconductor.org/packages/txdbmaker
+BugReports: https://github.com/Bioconductor/txdbmaker/issues
+Version: 0.0.0
+License: Artistic-2.0
+Encoding: UTF-8
+Authors@R: c(
+	person("H.", "Pagès", role=c("aut", "cre"),
+		email="hpages.on.github@gmail.com"),
+	person("M.", "Carlson", role="aut"),
+	person("P.", "Aboyoun", role="aut"),
+	person("S.", "Falcon", role="aut"),
+	person("M.", "Morgan", role="aut"),
+	person("M.", "Lawrence", role="aut"),
+	person("J.", "MacDonald", role="ctb"),
+	person("M.", "Ramos", role="ctb"),
+	person("S.", "Saini", role="ctb"),
+	person("L.", "Shepherd", role="ctb"))
+Depends: R (>= 4.4.0), BiocGenerics, S4Vectors, IRanges, GenomeInfoDb,
+	GenomicRanges, GenomicFeatures
+Imports: methods, utils, stats, tools, DBI, RSQLite (>= 2.0),
+	Biobase, BiocIO, rtracklayer, biomaRt
+Suggests: RMariaDB, ensembldb, RUnit, BiocStyle, knitr, markdown
+VignetteBuilder: knitr

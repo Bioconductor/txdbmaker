@@ -1,0 +1,63 @@
+import(methods)
+importFrom(utils, download.file, packageDescription, read.table, browseURL,
+                  as.person, capture.output, str)
+importFrom(stats, setNames)
+importFrom(tools, file_ext, file_path_sans_ext)
+importMethodsFrom(DBI, dbConnect, dbDisconnect,
+                       dbExecute, dbGetQuery,
+                       dbReadTable, dbWriteTable)
+importFrom(RSQLite, SQLite)
+
+import(BiocGenerics)
+import(S4Vectors)
+import(IRanges)
+import(GenomeInfoDb)
+import(GenomicRanges)
+import(GenomicFeatures)
+
+importFrom(Biobase, createPackage)
+importClassesFrom(BiocIO, BiocFile, CompressedFile)
+importFrom(BiocIO, FileForFormat)
+importFrom(rtracklayer, import, asGFF, browserSession,
+                        ucscTableQuery, tableNames, getTable, trackNames,
+                        ucscSchema, ucscTables)
+importFrom(biomaRt, getBM, listAttributes, listDatasets, listFilters,
+                    listMarts, useDataset, useEnsembl, useEnsemblGenomes)
+
+export(
+  ## makeTxDb.R:
+  makeTxDb,
+
+  ## makeTxDbFromUCSC.R:
+  supportedUCSCtables,
+  browseUCSCtrack,
+  makeTxDbFromUCSC,
+
+  ## makeTxDbFromBiomart.R:
+  getChromInfoFromBiomart,
+  makeTxDbFromBiomart,
+
+  ## makeTxDbFromEnsembl.R:
+  makeTxDbFromEnsembl,
+
+  ## makeTxDbFromGRanges.R:
+  makeTxDbFromGRanges,
+
+  ## makeTxDbFromGFF.R:
+  makeTxDbFromGFF,
+
+  ## makeFeatureDbFromUCSC.R:
+  supportedUCSCFeatureDbTracks,
+  supportedUCSCFeatureDbTables,
+  UCSCFeatureDbTableSchema,
+  makeFeatureDbFromUCSC,
+
+  ## makeTxDbPackage.R:
+  makePackageName,
+  makeTxDbPackage,
+  makeTxDbPackageFromUCSC,
+  makeTxDbPackageFromBiomart,
+  makeFDbPackageFromUCSC,
+  supportedMiRBaseBuildValues
+)
+
