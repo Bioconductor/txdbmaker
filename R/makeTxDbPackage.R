@@ -165,7 +165,7 @@ makeTxDbPackage <- function(txdb,
    authors <- .normAuthor(author, maintainer)
 
    ## there should only be one template
-   template_path <- system.file("txdb-template",package="GenomicFeatures")
+   template_path <- system.file("txdb-template", package="txdbmaker")
    ## We need to define some symbols in order to have the
    ## template filled out correctly.
    symvals <- list(
@@ -177,8 +177,6 @@ makeTxDbPackage <- function(txdb,
     PKGVERSION=version,
     AUTHOR=paste(authors, collapse=", "),
     MAINTAINER=as.character(.getMaintainer(authors)),
-    GFVERSION=.getMetaDataValue(txdb,
-      'GenomicFeatures version at creation time'),
     LIC=license,
     DBTYPE= dbType,
     ORGANISM=.getMetaDataValue(txdb,'Organism'),
@@ -224,7 +222,7 @@ makeTxDbPackage <- function(txdb,
 ## To handle 40 of the same warning: withCallingHandlers()
 ## elaborate example of how to do a good job of wrangling multiple warnings()
 
-## library(GenomicFeatures);txdb <- makeTxDbPackageFromUCSC(version='1', author="me", maintainer="you',genome = 'mm9', tablename = 'refGene')
+## library(txdbmaker);txdb <- makeTxDbPackageFromUCSC(version='1', author="me", maintainer="you',genome = 'mm9', tablename = 'refGene')
 
 ## THIS STILL DOESN'T WORK RIGHT!
 ## IOW THIS FAILS

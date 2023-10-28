@@ -1559,14 +1559,14 @@ test_makeTxDbFromGRanges_on_Ensembl_gtf <- function(all=FALSE)
 
 
 if (FALSE) {
-library(GenomicFeatures)
-source("GenomicFeatures/R/makeTxDbFromGRanges.R")
+library(txdbmaker)
+source("txdbmaker/R/makeTxDbFromGRanges.R")
 library(rtracklayer)
 
 ## Test with GRanges obtained from GFF3 files
 ## ==========================================
 
-GFF3_files <- system.file("extdata", "GFF3_files", package="GenomicFeatures")
+GFF3_files <- system.file("extdata", "GFF3_files", package="txdbmaker")
 
 file1 <- file.path(GFF3_files, "TheCanonicalGene_v1.gff3")
 gr1 <- import(file1, format="gff3", colnames=GFF3_COLNAMES,
@@ -1618,7 +1618,7 @@ gr6 <- import(file6, format="gff3", colnames=GFF3_COLNAMES,
 ## Test with GRanges obtained from GTF files
 ## =========================================
 
-GTF_files <- system.file("extdata", "GTF_files", package="GenomicFeatures")
+GTF_files <- system.file("extdata", "GTF_files", package="txdbmaker")
 
 ## test1.gtf grabbed from http://mblab.wustl.edu/GTF22.html (5 exon gene with
 ## 3 translated exons).

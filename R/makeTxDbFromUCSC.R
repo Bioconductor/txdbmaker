@@ -866,7 +866,7 @@ browseUCSCtrack <- function(genome="hg19",
             appendLF=FALSE)
     warning_tip1 <- paste0("You can see this by calling isCircular() on the ",
                            "TxDb object returned by makeTxDbFromUCSC().")
-    warning_tip2 <- paste0("See '?makeTxDbFromUCSC' in the GenomicFeatures ",
+    warning_tip2 <- paste0("See '?makeTxDbFromUCSC' in the txdbmaker ",
                            "package for more information.")
     chrominfo <- get_and_fix_chrom_info_from_UCSC(genome,
                                    goldenPath.url=goldenPath.url,
@@ -1040,7 +1040,7 @@ makeTxDbFromUCSC <- function(genome="hg19",
         txname2geneid <- .extract_txname2geneid_from_UCSC_txtable(
                                  ucsc_txtable, mapdef)
     } else {
-        stop(wmsg("GenomicFeatures internal error: invalid 'mapdef'"))
+        stop(wmsg("txdbmaker internal error: invalid 'mapdef'"))
     }
     .make_TxDb_from_UCSC_txtable(ucsc_txtable, txname2geneid$genes,
                                  genome, tablename, track,

@@ -489,7 +489,7 @@
 {
     nb_transcripts <- dbEasyQuery(conn,
                                   "SELECT COUNT(*) FROM transcript")[[1L]]
-    thispkg_version <- packageDescription("GenomicFeatures")$Version
+    thispkg_version <- packageDescription("txdbmaker")$Version
     rsqlite_version <- packageDescription("RSQLite")$Version
     mat1 <- matrix(c(
         DB_TYPE_NAME, DB_TYPE_VALUE,
@@ -498,9 +498,9 @@
     )
     mat2 <- matrix(c(
         "Nb of transcripts", nb_transcripts,
-        "Db created by",     "GenomicFeatures package from Bioconductor",
+        "Db created by",     "txdbmaker package from Bioconductor",
         "Creation time",     svn.time(),
-        "GenomicFeatures version at creation time", thispkg_version,
+        "txdbmaker version at creation time", thispkg_version,
         "RSQLite version at creation time", rsqlite_version,
         "DBSCHEMAVERSION",   DB_SCHEMA_VERSION),
         ncol=2, byrow=TRUE

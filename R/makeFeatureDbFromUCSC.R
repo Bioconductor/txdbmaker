@@ -79,15 +79,15 @@
 .writeMetadataFeatureTable <- function(conn, metadata, tableName) {
     data_nrow <- dbEasyQuery(conn, paste("SELECT COUNT(*) FROM ",tableName,
                                          collapse=""))[[1L]]
-    thispkg_version <- packageDescription("GenomicFeatures")$Version
+    thispkg_version <- packageDescription("txdbmaker")$Version
     rsqlite_version <- packageDescription("RSQLite")$Version
     mat <- matrix(c(
         DB_TYPE_NAME, "FeatureDb",
         "Supporting package", "GenomicFeatures",
         "data_nrow", data_nrow,
-        "Db created by", "GenomicFeatures package from Bioconductor",
+        "Db created by", "txdbmaker package from Bioconductor",
         "Creation time", svn.time(),
-        "GenomicFeatures version at creation time", thispkg_version,
+        "txdbmaker version at creation time", thispkg_version,
         "RSQLite version at creation time", rsqlite_version,
         "DBSCHEMAVERSION", DB_SCHEMA_VERSION),
         ncol=2, byrow=TRUE
@@ -267,11 +267,11 @@ makeFeatureDbFromUCSC <- function(genome,
     genome(session) <- genome
     track_tables <- ucscTables(genome, track)
     if (!(tablename %in% track_tables))
-        stop("GenomicFeatures internal error: ", tablename, " table doesn't ",
-             "exist or is not associated with ", track, " track. ",
-             "Thank you for reporting this to the GenomicFeatures maintainer ",
-             "or to the Bioconductor mailing list, and sorry for the ",
-             "inconvenience.")
+        stop(wmsg("txdbmaker internal error: ", tablename, " table doesn't ",
+                  "exist or is not associated with ", track, " track. ",
+                  "Please report the issue at ",
+                  "https://github.com/Bioconductor/txdbmaker/issues, ",
+                  "and sorry for the inconvenience."))
 
     ## Download the data table.
     message("Download the ", tablename, " table ... ", appendLF=FALSE)
@@ -289,12 +289,12 @@ makeFeatureDbFromUCSC <- function(genome,
 
     ## check that we have at least the 5 columns of data
     if(ncol(ucsc_table) < length(.UCSC_GENERICCOL2CLASS)+1)
-        stop("GenomicFeatures internal error: ", tablename, " table doesn't ",
-             "exist, was corrupted during download, or doesn't contain ",
-             "sufficient information. ",
-             "Thank you for reporting this to the GenomicFeatures maintainer ",
-             "or to the Bioconductor mailing list, and sorry for the ",
-             "inconvenience.")
+        stop(wmsg("txdbmaker internal error: ", tablename, " table doesn't ",
+                  "exist, was corrupted during download, or doesn't contain ",
+                  "sufficient information. ",
+                  "Please report the issue at ",
+                  "https://github.com/Bioconductor/txdbmaker/issues, ",
+                  "and sorry for the inconvenience."))
     message("OK")
     ## also check that our data CONTAINS the column names we need it to
 
@@ -302,13 +302,14 @@ makeFeatureDbFromUCSC <- function(genome,
     message("Checking that required Columns are present ... ")
     if(length(intersect(colnames(ucsc_table),names(.UCSC_GENERICCOL2CLASS)))<4)
         ## That means that some required cols are missing!
-        stop("GenomicFeatures internal error: ", tablename, " table doesn't ",
-             "contain a 'chrom', 'chromStart', or 'chromEnd' column and no ",
-             "reasonable substitute has been designated via the 'chromCol'",
-             "'chromStartCol' or 'chromEndCol' arguments.  ",
-             "If this is not possible, please report that fact to the ",
-             "GenomicFeatures maintainer or to the Bioconductor mailing list. ",
-             " Thank you.")
+        stop(wmsg("txdbmaker internal error: ", tablename, " table doesn't ",
+                  "contain a 'chrom', 'chromStart', or 'chromEnd' column, ",
+                  "and no reasonable substitute has been designated via ",
+                  "the 'chromCol', 'chromStartCol', or 'chromEndCol' ",
+                  "argument. If this is not possible, please report ",
+                  "that fact by opening an issue at ",
+                  "https://github.com/Bioconductor/txdbmaker/issues. ",
+                  "Thank you."))
     message("OK")
 
 
