@@ -11,7 +11,7 @@ biocViews: Infrastructure, DataImport, Annotation, GenomeAnnotation,
 	GenomeAssembly, Genetics, Sequencing
 URL: https://bioconductor.org/packages/txdbmaker
 BugReports: https://github.com/Bioconductor/txdbmaker/issues
-Version: 0.99.0
+Version: 0.99.1
 License: Artistic-2.0
 Encoding: UTF-8
 Authors@R: c(
@@ -26,7 +26,7 @@ Authors@R: c(
 	person("M.", "Ramos", role="ctb"),
 	person("S.", "Saini", role="ctb"),
 	person("L.", "Shepherd", role="ctb"))
-Depends: R (>= 4.4.0), BiocGenerics, S4Vectors, IRanges, GenomeInfoDb,
+Depends: BiocGenerics, S4Vectors, IRanges, GenomeInfoDb,
 	AnnotationDbi, GenomicRanges, GenomicFeatures
 Imports: methods, utils, stats, tools, DBI, RSQLite (>= 2.0),
 	Biobase, BiocIO, rtracklayer, biomaRt
