@@ -6,7 +6,7 @@ author:
 - name: Hervé Pagès
 - name: Seth Falcon
 - name: Martin Morgan
-date: "Compiled `r doc_date()`;  Modified 28 Oct 023"
+date: "Compiled `r doc_date()`;  Modified 29 Jan 2024"
 package: txdbmaker
 vignette: |
   %\VignetteIndexEntry{Making TxDb Objects}
@@ -28,10 +28,25 @@ BioMart (http://www.biomart.org/), or directly from a GFF or GTF file.
 See the vignette in the `GenomicFeatures` package for an
 introduction to `TxDb` objects.
 
-The following subsections demonstrate the use of these functions.
+This document demonstrates the use of these functions.
+
 There is also support for creating `TxDb` objects from custom data
 sources using `makeTxDb`; see the help page for this function for
 details.
+
+
+# Installing the `txdbmaker` package
+
+Install the package with:
+
+```{r installtxdbmaker, eval=FALSE}
+if (!require("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("txdbmaker")
+```
+
+Then load it with:
 
 ```{r loadtxdbmaker}
 suppressPackageStartupMessages(library(txdbmaker))

@@ -46,7 +46,7 @@
     if (.isEnsemblMirror(host))
         useEnsembl(biomart=biomart, dataset=dataset, host=host)
     else
-        useEnsemblGenomes(biomart=biomart, dataset=dataset)
+        useEnsemblGenomes(biomart=biomart, dataset=dataset, host=host)
 }
 
 ### TODO: Share this with normalization of 'filter' arg in the transcripts(),

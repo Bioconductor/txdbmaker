@@ -89,7 +89,7 @@ makeTxDbFromGFF(file,
 \value{A \link[GenomicFeatures]{TxDb} object.}
 
 \author{
-  M. Carlson and H. Pagès
+  H. Pagès and M. Carlson
 }
 
 \seealso{
@@ -121,23 +121,25 @@ makeTxDbFromGFF(file,
 
 \examples{
 ## TESTING GFF3
-gffFile <- system.file("extdata", "GFF3_files", "a.gff3",package="txdbmaker")
-txdb <- makeTxDbFromGFF(file=gffFile,
-            dataSource="partial gtf file for Tomatoes for testing",
-            organism="Solanum lycopersicum")
+gffFile <- system.file("extdata", "GFF3_files", "a.gff3", package="txdbmaker")
+txdb <- makeTxDbFromGFF(gffFile,
+                        dataSource="partial gtf file for Tomatoes for testing",
+                        organism="Solanum lycopersicum")
 
-## TESTING GTF, this time specifying the chrominfo
-gtfFile <- system.file("extdata","GTF_files","Aedes_aegypti.partial.gtf",
+## TESTING GTF, this time specifying some metadata and the chrominfo
+gtfFile <- system.file("extdata", "GTF_files",
+                       "GCA_002204515.1_AaegL5.0_genomic.gtf.gz",
                        package="txdbmaker")
-chrominfo <- data.frame(chrom = c('supercont1.1','supercont1.2'),
-                        length=c(5220442, 5300000),
-                        is_circular=c(FALSE, FALSE))
-metadata <- data.frame(name="Resource URL",
-                       value=paste0("ftp://ftp.ensemblgenomes.org/pub/metazoa/",
-                                    "release-13/gtf/aedes_aegypti/"))
-txdb2 <- makeTxDbFromGFF(file=gtfFile,
-             chrominfo=chrominfo,
-             dataSource="ensemblgenomes",
-             organism="Aedes aegypti",
-             metadata=metadata)
+resource_url <- paste0("ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/204/515/",
+                       "GCA_002204515.1_AaegL5.0/")
+metadata <- data.frame(name="Resource URL", value=resource_url)
+chrominfo <- data.frame(chrom="MF194022.1",
+                        length=16790,
+                        is_circular=TRUE,
+                        genome="AaegL5.0")
+txdb2 <- makeTxDbFromGFF(gtfFile,
+                         dataSource="NCBI",
+                         organism="Aedes aegypti",
+                         chrominfo=chrominfo,
+                         metadata=metadata)
 }

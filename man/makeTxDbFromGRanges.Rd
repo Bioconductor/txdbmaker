@@ -105,7 +105,7 @@ gr <- import(path)
 txdb <- makeTxDbFromGRanges(gr)
 txdb
 
-path <- file.path(GTF_files, "Aedes_aegypti.partial.gtf")
+path <- file.path(GTF_files, "GCA_002204515.1_AaegL5.0_genomic.gtf.gz")
 gr <- import(path)
 txdb <- makeTxDbFromGRanges(gr)
 txdb

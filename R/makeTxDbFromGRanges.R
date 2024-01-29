@@ -489,9 +489,9 @@ GFF_FEATURE_TYPES <- c(.GENE_TYPES, .TX_TYPES, .EXON_TYPES,
     which(is_cds)
 }
 
-### Returns the index of CDS whose Parent is a gene (this happens with some
-### GFF files e.g. inst/extdata/GFF3_files/NC_011025.gff). These CDS will
-### also be considered exons (i.e. added to the set of exons).
+### Returns the index of CDS whose Parent is a gene (happens with some GFF
+### files e.g. inst/extdata/GFF3_files/GCF_000020065.1_ASM2006v1_genomic.gff).
+### These CDS will also be considered exons (i.e. added to the set of exons).
 .get_cds_with_gene_parent_IDX <- function(cds_IDX, Parent, gene_IDX, ID,
                                           gtf.format=FALSE)
 {
@@ -759,6 +759,8 @@ GFF_FEATURE_TYPES <- c(.GENE_TYPES, .TX_TYPES, .EXON_TYPES,
         colnames(exons) <- sub("^exon_", "", colnames(exons))
         if (feature == "cds" && !is.null(phase))
             exons$phase <- cds_phase
+        if (gtf.format && !is.null(mcols0$gene_id))
+            exons$gene_id <- rep.int(mcols0$gene_id[exon_IDX], nparent_per_ex)
     }
     exons
 }
@@ -932,7 +934,7 @@ GFF_FEATURE_TYPES <- c(.GENE_TYPES, .TX_TYPES, .EXON_TYPES,
 
     tx_id <- names(exons_by_id)
 
-    tx_type <- rep.int("inferred_from_exons", length(tx_id))
+    tx_type <- rep.int("inferred_from_exon", length(tx_id))
 
     tx_chrom <- unique(exons_by_id[ , "exon_chrom"])
     tx_chrom[elementNROWS(tx_chrom) != 1L] <- NA_character_
@@ -957,12 +959,33 @@ GFF_FEATURE_TYPES <- c(.GENE_TYPES, .TX_TYPES, .EXON_TYPES,
     )
 }
 
-.add_missing_transcripts <- function(transcripts, exons)
+.add_transcripts_for_orphan_exons <- function(transcripts, exons)
 {
     is_orphan <- !(exons$tx_id %in% transcripts$tx_id)
     orphan_exons <- S4Vectors:::extract_data_frame_rows(exons, is_orphan)
-    missing_transcripts <- .infer_transcripts_from_exons(orphan_exons)
-    rbind(transcripts, missing_transcripts)
+    new_transcripts <- .infer_transcripts_from_exons(orphan_exons)
+    rbind(transcripts, new_transcripts)
+}
+
+.infer_transcripts_from_genes <- function(gene_ids, gene_IDX, gene_id, gr)
+{
+    gene_id <- gene_id[gene_IDX]
+    gene_ids <- intersect(gene_ids, gene_id)
+    m <- match(gene_ids, gene_id)
+    gene_ranges <- gr[gene_IDX][m]
+
+    tx_type <- rep.int("inferred_from_gene", length(gene_ids))
+
+    data.frame(
+        tx_id=gene_ids,
+        tx_name=gene_ids,
+        tx_type=tx_type,
+        tx_chrom=seqnames(gene_ranges),
+        tx_strand=strand(gene_ranges),
+        tx_start=start(gene_ranges),
+        tx_end=end(gene_ranges),
+        stringsAsFactors=FALSE
+    )
 }
 
 
@@ -1009,9 +1032,20 @@ GFF_FEATURE_TYPES <- c(.GENE_TYPES, .TX_TYPES, .EXON_TYPES,
 
 .make_splicings <- function(exons, cds, stop_codons=NULL)
 {
-    cds_tx_id <- factor(cds$tx_id, levels=levels(exons$tx_id))
-    if (any(is.na(cds_tx_id)))
-        stop(wmsg("some CDS parts cannot be mapped to an exon"))
+    m <- match(cds$tx_id, exons$tx_id)
+    unmapped_idx <- which(is.na(m))
+    if (length(unmapped_idx) != 0L) {
+        if (is.null(cds$gene_id)) {
+            stop(wmsg("some CDS parts cannot be mapped to an exon"))
+        } else {
+            m2 <- match(cds$gene_id[unmapped_idx], exons$tx_id)
+            if (anyNA(m2))
+                stop(wmsg("some CDS parts cannot be mapped to an exon"))
+            m[unmapped_idx] <- m2
+        }
+    }
+    cds_tx_id <- exons$tx_id[m]
+    cds_tx_id <- factor(cds_tx_id, levels=levels(exons$tx_id))
     cds$tx_id <- cds_tx_id
 
     exon2cds <- .find_exon_cds(exons, cds)
@@ -1023,10 +1057,21 @@ GFF_FEATURE_TYPES <- c(.GENE_TYPES, .TX_TYPES, .EXON_TYPES,
         cds_phase <- cds$phase[exon2cds]
 
     if (!is.null(stop_codons)) {
-        stop_codons_tx_id <- factor(stop_codons$tx_id,
+        m <- match(stop_codons$tx_id, exons$tx_id)
+        unmapped_idx <- which(is.na(m))
+        if (length(unmapped_idx) != 0L) {
+            if (is.null(stop_codons$gene_id)) {
+                stop(wmsg("some stop codons cannot be mapped to an exon"))
+            } else {
+                m2 <- match(stop_codons$gene_id[unmapped_idx], exons$tx_id)
+                if (anyNA(m2))
+                    stop(wmsg("some stop codons cannot be mapped to an exon"))
+                m[unmapped_idx] <- m2
+            }
+        }
+        stop_codons_tx_id <- exons$tx_id[m]
+        stop_codons_tx_id <- factor(stop_codons_tx_id,
                                     levels=levels(exons$tx_id))
-        if (any(is.na(stop_codons_tx_id)))
-            stop(wmsg("some stop codons cannot be mapped to an exon"))
         stop_codons$tx_id <- stop_codons_tx_id
 
         exon2stop_codon <- .find_exon_cds(exons, stop_codons,
@@ -1337,10 +1382,24 @@ makeTxDbFromGRanges <- function(gr, drop.stop.codons=FALSE, metadata=NULL,
                                                      mcols0$transcript_id,
                                                      mcols0$Name)
     if (gtf.format) {
-        transcripts <- .add_missing_transcripts(transcripts, exons)
+        ## We add one transcript for each exon not associated with a transcript.
+        transcripts <- .add_transcripts_for_orphan_exons(transcripts, exons)
         genes <- .extract_genes_from_gtf_GRanges(mcols0$transcript_id,
                                                  mcols0$gene_id,
                                                  transcripts)
+        ## We add one transcript for each gene that is not associated with
+        ## any transcript.
+        no_tx_gene_ids <- setdiff(mcols0$gene_id, genes$gene_id)
+        if (length(no_tx_gene_ids) != 0L) {
+            new_transcripts <- .infer_transcripts_from_genes(no_tx_gene_ids,
+                                                             gene_IDX,
+                                                             mcols0$gene_id, gr)
+            transcripts <- rbind(transcripts, new_transcripts)
+            new_genes <- data.frame(tx_id=new_transcripts$tx_id,
+                                    gene_id=new_transcripts$tx_id,
+                                    stringsAsFactors=FALSE)
+            genes <- rbind(genes, new_genes)
+        }
     } else {
         Dbxref <- .get_Dbxref(gr_mcols)
         geneID <- .get_geneID(gr_mcols)
@@ -1592,7 +1651,7 @@ gr4 <- import(file4, format="gff3", colnames=GFF3_COLNAMES,
 txdb4 <- makeTxDbFromGRanges(gr4)
 txdb4  # exactly the same as with makeTxDbFromGFF()
 
-file5 <- file.path(GFF3_files, "NC_011025.gff")
+file5 <- file.path(GFF3_files, "GCF_000020065.1_ASM2006v1_genomic.gff")
 gr5 <- import(file5, format="gff3", colnames=GFF3_COLNAMES,
                      feature.type=GFF_FEATURE_TYPES)
 txdb5 <- makeTxDbFromGRanges(gr5)
@@ -1628,7 +1687,7 @@ gr1 <- import(file1, format="gtf", colnames=GTF_COLNAMES,
 txdb1 <- makeTxDbFromGRanges(gr1)
 txdb1
 
-file2 <- file.path(GTF_files, "Aedes_aegypti.partial.gtf")
+file2 <- file.path(GTF_files, "GCA_002204515.1_AaegL5.0_genomic.gtf.gz")
 gr2 <- import(file2, format="gtf", colnames=GTF_COLNAMES,
                      feature.type=GFF_FEATURE_TYPES)
 txdb2 <- makeTxDbFromGRanges(gr2)
