@@ -20,12 +20,11 @@
 makeTxDbFromUCSC(genome="hg19", tablename="knownGene",
         transcript_ids=NULL,
         circ_seqs=NULL,
-        url="https://genome.ucsc.edu/cgi-bin/",
         goldenPath.url=getOption("UCSC.goldenPath.url"),
         taxonomyId=NA,
         miRBaseBuild=NA)
 
-supportedUCSCtables(genome="hg19", url="https://genome.ucsc.edu/cgi-bin/")
+supportedUCSCtables(genome="hg19")
 
 browseUCSCtrack(genome="hg19", tablename="knownGene",
                 url="https://genome.ucsc.edu/cgi-bin/")
@@ -73,7 +72,11 @@ browseUCSCtrack(genome="hg19", tablename="knownGene",
     you can supply your own list of circular sequences (as a character
     vector) via the \code{circ_seqs} argument.
   }
-  \item{url,goldenPath.url}{
+  \item{goldenPath.url}{
+    A single string specifying the URL to the UCSC goldenPath location
+    where the chromosome sizes are expected to be found.
+  }
+  \item{url}{
     Use to specify the location of an alternate UCSC Genome Browser.
   }
   \item{taxonomyId}{
@@ -139,10 +142,6 @@ browseUCSCtrack(genome="hg19", tablename="knownGene",
 }
 
 \examples{
-## ---------------------------------------------------------------------
-## A. BASIC USAGE
-## ---------------------------------------------------------------------
-
 ## Use ucscGenomes() from the rtracklayer package to display the list of
 ## genomes available at UCSC:
 library(rtracklayer)
@@ -180,14 +179,4 @@ transcript_ids <- c(
 txdb2 <- makeTxDbFromUCSC("mm10", tablename="knownGene",
                           transcript_ids=transcript_ids)
 txdb2
-
-## ---------------------------------------------------------------------
-## B. IMPORTANT NOTE ABOUT supportedUCSCtables()
-## ---------------------------------------------------------------------
-
-## In the data frame returned by supportedUCSCtables(), the set of
-## tables associated with a track with subtracks might contain tables
-## that don't exist for the specified genome:
-supportedUCSCtables("mm10")
-browseUCSCtrack("mm10", tablename="ncbiRefSeqSelect")  # no such table
 }

@@ -39,7 +39,6 @@ makeTxDbPackageFromUCSC(
     tablename="knownGene",
     transcript_ids=NULL,
     circ_seqs=NULL,
-    url="https://genome.ucsc.edu/cgi-bin/",
     goldenPath.url=getOption("UCSC.goldenPath.url"),
     taxonomyId=NA,
     miRBaseBuild=NA)

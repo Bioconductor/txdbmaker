@@ -1,6 +1,5 @@
 ###
 
-if (FALSE) {
 test_makeTxDbFromUCSC <- function()
 {
     txdb_file <- system.file("extdata",
@@ -12,5 +11,4 @@ test_makeTxDbFromUCSC <- function()
 
     ok <- GenomicFeatures:::compareTxDbs(target_txdb, current_txdb)
     checkTrue(ok)
-}
 }

@@ -3,6 +3,8 @@ importFrom(utils, download.file, packageDescription, read.table, browseURL,
                   as.person, capture.output, str)
 importFrom(stats, setNames)
 importFrom(tools, file_ext, file_path_sans_ext)
+importFrom(httr, GET, content)
+importFrom(rjson, fromJSON)
 importMethodsFrom(DBI, dbConnect, dbDisconnect,
                        dbExecute, dbGetQuery,
                        dbReadTable, dbWriteTable)
@@ -19,6 +21,8 @@ import(GenomicFeatures)
 importFrom(Biobase, createPackage)
 importClassesFrom(BiocIO, BiocFile, CompressedFile)
 importFrom(BiocIO, import, FileForFormat)
+
+## rtracklayer only used in R/makeFeatureDbFromUCSC.R
 importFrom(rtracklayer, browserSession, trackNames, ucscTables,
                         ucscTableQuery, getTable, ucscSchema)
 importFrom(biomaRt, getBM, listAttributes, listDatasets, listFilters,

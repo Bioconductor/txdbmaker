@@ -241,7 +241,6 @@ makeTxDbPackageFromUCSC <- function(
   tablename="knownGene",
   transcript_ids=NULL,    ## optional
   circ_seqs=NULL,
-  url="https://genome.ucsc.edu/cgi-bin/",
   goldenPath.url=getOption("UCSC.goldenPath.url"),
   taxonomyId=NA,
   miRBaseBuild=NA){
@@ -273,9 +272,6 @@ makeTxDbPackageFromUCSC <- function(
     }
     if(is.character(circ_seqs) && length(circ_seqs)<1){
         stop("'circ_seqs' must be supplied as a named character vector.")}
-    if(!isSingleString(url)){
-        stop("'url' must be supplied as a single element",
-             " character vector.")}
     if(!isSingleString(goldenPath.url)){
         stop("'goldenPath.url' must be supplied as a single element",
              " character vector.")}
@@ -288,7 +284,6 @@ makeTxDbPackageFromUCSC <- function(
                              tablename=tablename,
                              transcript_ids=transcript_ids,
                              circ_seqs=circ_seqs,
-                             url=url,
                              goldenPath.url=goldenPath.url,
                              taxonomyId=taxonomyId,
                              miRBaseBuild=miRBaseBuild)
