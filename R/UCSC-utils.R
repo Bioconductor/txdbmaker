@@ -238,6 +238,7 @@ lookup_organism_by_UCSC_genome <- function(genome)
     genome2org[genome]
 }
 
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### UCSC_dbselect()
 ###

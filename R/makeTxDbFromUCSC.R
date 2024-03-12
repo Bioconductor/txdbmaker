@@ -18,7 +18,7 @@
     exonEnds="list"       # list of raw vectors
 )
 
-### A thin wrapper to list_UCSC_primary_tables(genome, group="genes").
+### A thin wrapper around list_UCSC_primary_tables(genome, group="genes").
 ### Returns a data.frame with 3 columns ("tablename", "track", and
 ### "composite_track") and 1 row per primary table.
 supportedUCSCtables <- function(genome="hg19")
@@ -315,8 +315,9 @@ browseUCSCtrack <- function(genome="hg19",
     message("Download the ", tablename, " table ... ", appendLF=FALSE)
     ans <- UCSC_dbselect(genome, tablename, columns=columns, where=where)
     message("OK")
-    ## DBI is returning blobs for exon starts and stops so the old check fails
-    stopifnot(all(mapply(function(x, y) is(x, y), ans, .UCSC_TXCOL2CLASS)))
+    ## DBI is returning blobs for exon starts and stops, so the old check fails
+    stopifnot(all(mapply(function(x, y) is(x, y),
+                         ans[names(.UCSC_TXCOL2CLASS)], .UCSC_TXCOL2CLASS)))
     ##current_classes <- head(sapply(ans, class),
     ##                        n=length(.UCSC_TXCOL2CLASS))
     ##stopifnot(identical(current_classes, .UCSC_TXCOL2CLASS))
@@ -686,22 +687,23 @@ browseUCSCtrack <- function(genome="hg19",
     ans
 }
 
-### Some timings (as of Jan 31, 2018, GenomicFeatures 1.31.7):
+### Some timings (as of March 11, 2024, txdbmaker 0.99.5):
 ###          |             |    nb of    |
 ###   genome |   tablename | transcripts | time (s)
 ###   ---------------------------------------------
-###     hg18 |   knownGene |       66803 |     37.2
-###     hg18 |     refGene |       68178 |     42.6
-###     hg19 |   knownGene |       82960 |     44.9
-###     hg19 |     refGene |       69998 |     45.5
-###     hg38 |     ensGene |      204940 |     63.7
-###     hg19 |    ccdsGene |       28856 |     29.2
-###     hg19 | xenoRefGene |      177746 |    114.1
-###     hg38 |   knownGene |      197782 |     53.9
-###     hg38 |     refGene |       74673 |     38.4
-###      dm3 | flyBaseGene |       21236 |     28.9
-###  sacCer2 |     sgdGene |        6717 |     22.6
-###  sacCer3 |     ensGene |        7126 |     18.1
+###     hg18 |   knownGene |       66803 |     14.8
+###     hg18 |     refGene |       79204 |     12.6
+###     hg19 |   knownGene |       82960 |     16.3
+###     hg19 |     refGene |       81407 |     11.3
+###     hg19 |    ccdsGene |       28855 |      4.9
+###     hg19 | xenoRefGene |      183060 |     30.0
+###     hg38 |   knownGene |      276905 |     22.3
+###     hg38 |     refGene |       88819 |     13.3
+###     hg38 |    ccdsGene |       32506 |      5.3
+###     hg38 | xenoRefGene |      200365 |     35.3
+###      dm3 | flyBaseGene |       21236 |      5.2
+###  sacCer2 |     sgdGene |        6717 |      4.0
+###  sacCer3 |     ensGene |        7127 |      2.8
 makeTxDbFromUCSC <- function(genome="hg19",
         tablename="knownGene",
         transcript_ids=NULL,
