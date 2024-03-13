@@ -4,49 +4,156 @@
 ###
 
 
+.UCSC_REST_API_URL <- "https://api.genome.ucsc.edu"
+
+.cached_rest_api_results <- new.env(parent=emptyenv())
+
+
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### list_UCSC_primary_tables()
+### list_UCSC_genomes()
 ###
 
-.cached_genome_tracks <- new.env(parent=emptyenv())
-
-.get_genome_tracks <- function(genome, recache=FALSE)
+.get_UCSC_genomes <- function(recache=FALSE)
 {
-    stopifnot(isSingleString(genome), isTRUEorFALSE(recache))
-    ans <- .cached_genome_tracks[[genome]]
+    if (!isTRUEorFALSE(recache))
+        stop(wmsg("'recache' must be TRUE or FALSE"))
+    ans <- .cached_rest_api_results[["ucscGenomes"]]
     if (is.null(ans) || recache) {
-        url <- "https://api.genome.ucsc.edu"
-        response <- GET(url, path="list/tracks", query=list(genome=genome))
+        url <- .UCSC_REST_API_URL
+        response <- GET(url, path="list/ucscGenomes")
         if (response$status_code != 200L)
-            stop(wmsg(genome, ": unknown genome (or ", url, " is down?)"))
+            stop(wmsg("failed to retrieve list of UCSC genomes"))
         json <- content(response, as="text", encoding="UTF-8")
-        ans <- fromJSON(json)[[genome]]
-        .cached_genome_tracks[[genome]] <- ans
+        ans <- fromJSON(json)[["ucscGenomes"]]
+        stopifnot(is.list(ans))  # sanity check
+        .cached_rest_api_results[["ucscGenomes"]] <- ans
     }
     ans
 }
 
-### Typical usage: list_UCSC_primary_tables("mm9", group="genes")
-### Returns a data.frame with 1 row per primary table and 5 columns:
-### primary_table, track, type, group, composite_track.
-### Note that the "group" and "composite_track" columns can contain NAs.
-list_UCSC_primary_tables <- function(genome, group=NULL, recache=FALSE)
+### Returns a data.frame with 1 row per genome and 5 columns:
+### organism, genome, common_name, tax_id, description.
+### A few things align with GenomeInfoDb::registered_UCSC_genomes():
+###   - colnames "organism" and "genome" on the returned data frame;
+###   - column "organism" returned as a factor;
+###   - name, default value, and behavior of 'organism' argument, but with
+###     the difference that we also search matches in the "common_name"
+###     column (in addition to matches in the "organism" column);
+###   - order of rows in the returned data frame.
+list_UCSC_genomes <- function(organism=NA, recache=FALSE)
 {
-    stopifnot(is.null(group) || isSingleString(group))
-    genome_tracks <- .get_genome_tracks(genome, recache=recache)
+    if (!isSingleStringOrNA(organism))
+        stop(wmsg("'organism' must be a single string or NA"))
+    genomes <- .get_UCSC_genomes(recache=recache)
+
+    ans_organism <- factor(vapply(genomes,
+        function(genome) {
+            stopifnot(is.list(genome))  # sanity check
+            genome$scientificName
+        },
+        character(1), USE.NAMES=FALSE
+    ))
+    ans_common_name <- factor(vapply(genomes,
+        function(genome) genome$organism,
+        character(1), USE.NAMES=FALSE
+    ))
+    if (!is.na(organism)) {
+        keep_idx <- which(grepl(organism, ans_organism, ignore.case=TRUE) |
+                          grepl(organism, ans_common_name, ignore.case=TRUE))
+        genomes <- genomes[keep_idx]
+        ans_organism <- ans_organism[keep_idx]
+        ans_common_name <- ans_common_name[keep_idx]
+    }
+
+    ans_genome <- names(genomes)
+    ans_tax_id <- vapply(genomes,
+        function(genome) as.integer(genome$taxId),
+        integer(1), USE.NAMES=FALSE
+    )
+    ans_description <- vapply(genomes,
+        function(genome) genome$description,
+        character(1), USE.NAMES=FALSE
+    )
+
+    ans <- data.frame(
+        organism=ans_organism,
+        genome=ans_genome,
+        common_name=ans_common_name,
+        tax_id=ans_tax_id,
+        description=ans_description
+    )
+    oo <- GenomeInfoDb:::order_organism_genome_pairs(ans$organism, ans$genome)
+    S4Vectors:::extract_data_frame_rows(ans, oo)
+}
+
+### Convenience helper based on list_UCSC_genomes().
+get_organism_for_UCSC_genome <- function(genome)
+{
+    if (!(isSingleString(genome) && nzchar(genome)))
+        stop(wmsg("'genome' must be a single (non-empty) string"))
+    df <- list_UCSC_genomes()
+    idx <- match(genome, df$genome)
+    if (is.na(idx))
+        stop(wmsg(genome, ": unknown UCSC genome"))
+    as.character(df$organism[idx])
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### list_UCSC_primary_tables()
+###
+
+.get_UCSC_genome_tracks <- function(genome, recache=FALSE)
+{
+    if (!(isSingleString(genome) && nzchar(genome)))
+        stop(wmsg("'genome' must be a single (non-empty) string"))
+    if (!isTRUEorFALSE(recache))
+        stop(wmsg("'recache' must be TRUE or FALSE"))
+    ans <- .cached_rest_api_results[[genome]]
+    if (is.null(ans) || recache) {
+        url <- .UCSC_REST_API_URL
+        response <- GET(url, path="list/tracks", query=list(genome=genome))
+        if (response$status_code != 200L)
+            stop(wmsg(genome, ": unknown UCSC genome (or ", url, " is down?)"))
+        json <- content(response, as="text", encoding="UTF-8")
+        ans <- fromJSON(json)[[genome]]
+        stopifnot(is.list(ans))  # sanity check
+        .cached_rest_api_results[[genome]] <- ans
+    }
+    ans
+}
+
+### Typical usage:
+###     list_UCSC_primary_tables("ce2")
+###     list_UCSC_primary_tables("mm9", track_group="genes")
+###     list_UCSC_primary_tables("hg38", track_group=NA)
+### Returns a data.frame with 1 row per primary table and 5 columns:
+### primary_table, track, type, track_group, composite_track.
+### Note that the "track_group" and "composite_track" columns can contain NAs.
+### Passing 'track_group=NA' is accepted and keeps only rows for tracks that
+### don't belong to any group. This is why default value for the 'track_group'
+### argument is NULL and not NA like for the 'organism' argument in
+### list_UCSC_genomes() above.
+list_UCSC_primary_tables <- function(genome, track_group=NULL, recache=FALSE)
+{
+    if (!(is.null(track_group) || isSingleStringOrNA(track_group)))
+        stop(wmsg("'track_group' must be a single string, or NA, or NULL"))
+    genome_tracks <- .get_UCSC_genome_tracks(genome, recache=recache)
 
     track_groups <- vapply(genome_tracks,
         function(track) {
-            group <- track$group
-            if (is.null(group)) NA_character_ else group
+            stopifnot(is.list(track))  # sanity check
+            idx <- match("group", names(track))
+            if (is.na(idx)) NA_character_ else track[[idx]]
         },
         character(1), USE.NAMES=FALSE
     )
-    if (!is.null(group)) {
-        keep_idx <- which(track_groups %in% group)
+    if (!is.null(track_group)) {
+        keep_idx <- which(track_groups %in% track_group)
         genome_tracks <- genome_tracks[keep_idx]
         track_groups <- track_groups[keep_idx]
     }
+
     track_names <- vapply(genome_tracks,
         function(track) track$shortLabel,
         character(1), USE.NAMES=FALSE
@@ -93,7 +200,7 @@ list_UCSC_primary_tables <- function(genome, group=NULL, recache=FALSE)
     ans_primary_table <- rep.int(names(genome_tracks), times)
     ans_primary_table[ans_is_composite] <-
         unlist(nested_primary_tables, use.names=FALSE)
-    stopifnot(anyDuplicated(ans_primary_table) == 0L)
+    stopifnot(anyDuplicated(ans_primary_table) == 0L)  # sanity check
     ans_track <- ans_composite_track <- rep.int(track_names, times)
     ans_track[ans_is_composite] <-
         unlist(nested_track_names, use.names=FALSE)
@@ -107,151 +214,9 @@ list_UCSC_primary_tables <- function(genome, group=NULL, recache=FALSE)
         primary_table=ans_primary_table,
         track=ans_track,
         type=ans_type,
-        group=ans_group,
+        track_group=ans_group,
         composite_track=ans_composite_track
     )
-}
-
-
-### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### lookup_organism_by_UCSC_genome()
-###
-
-lookup_organism_by_UCSC_genome <- function(genome)
-{
-    genome <- gsub("\\d+$", "", genome)
-
-    ## Fetch all UCSC genomes with:
-    ##   library(RMariaDB)
-    ##   dbconn <- dbConnect(MariaDB(), username="genome",
-    ##                       host="genome-mysql.soe.ucsc.edu", port=3306)
-    ##   genomes <- sort(dbGetQuery(dbconn, "SHOW DATABASES")[[1L]])
-    ##   unique(gsub("\\d+$", "", genomes))
-    genome2org <- c(
-        ailMel="Ailuropoda melanoleuca",
-        allMis="Alligator mississippiensis",
-        anoCar="Anolis carolinensis",
-        anoGam="Anopheles gambiae",
-        apiMel="Apis mellifera",
-        aplCal="Aplysia californica",
-        aptMan="Apteryx australis",
-        aquChr="Aquila chrysaetos canadensis",
-
-        balAcu="Balaenoptera acutorostrata",
-        bisBis="Bison bison",
-        bosTau="Bos taurus",
-        braFlo="Branchiostoma floridae",
-
-        caeJap="Caenorhabditis japonica",
-        caePb="Caenorhabditis brenneri",
-        caeRem="Caenorhabditis remanei",
-        calJac="Callithrix jacchus",
-        calMil="Callorhinchus milii",
-        canFam="Canis familiaris",
-        cavPor="Cavia porcellus",
-        cb="Caenorhabditis briggsae",
-        ce="Caenorhabditis elegans",
-        cerSim="Ceratotherium simum",
-        chlSab="Chlorocebus sabaeus",
-        choHof="Choloepus hoffmanni",
-        chrPic="Chrysemys picta",
-        ci="Ciona intestinalis",
-        criGri= "Cricetulus griseus",
-
-        danRer="Danio rerio",
-        dasNov="Dasypus novemcinctus",
-        dipOrd="Dipodomys ordii",
-        dm="Drosophila melanogaster",
-        dp="Drosophila pseudoobscura",
-        droAna="Drosophila ananassae",
-        droEre="Drosophila erecta",
-        droGri="Drosophila grimshawi",
-        droMoj="Drosophila mojavensis",
-        droPer="Drosophila persimilis",
-        droSec="Drosophila sechellia",
-        droSim="Drosophila simulans",
-        droVir="Drosophila virilis",
-        droYak="Drosophila yakuba",
-
-        eboVir="Filoviridae ebolavirus",
-        echTel="Echinops telfairi",
-        equCab="Equus caballus",
-        eriEur= "Erinaceus europaeus",
-
-        felCat="Felis catus",
-        fr="Fugu rubripes",
-
-        gadMor="Gadus morhua",
-        galGal="Gallus gallus",
-        galVar="Galeopterus variegatus",
-        gasAcu="Gasterosteus aculeatus",
-        geoFor="Geospiza fortis",
-        gorGor="Gorilla gorilla",
-
-        hetGla="Heterocephalus glaber",
-        hg="Homo sapiens",
-
-        latCha="Latimeria chalumnae",
-        loxAfr="Loxodonta africana",
-
-        macEug="Macropus eugenii",
-        macFas="Macaca fascicularis",
-        manPen="Manis pentadactyla",
-        melGal="Meleagris gallopavo",
-        melUnd="Melopsittacus undulatus",
-        micMur="Microcebus murinus",
-        mm="Mus musculus",
-        monDom="Monodelphis domestica",
-        musFur="Mustela putorius",
-        myoLuc="Myotis lucifugus",
-
-        nanPar="Nanorana parkeri",
-        nasLar="Nasalis larvatus",
-        nomLeu="Nomascus leucogenys",
-
-        ochPri="Ochotona princeps",
-        oreNil="Oreochromis niloticus",
-        ornAna="Ornithorhynchus anatinus",
-        oryCun="Oryctolagus cuniculus",
-        oryLat="Oryzias latipes",
-        otoGar="Otolemur garnettii",
-        oviAri="Ovis aries",
-
-        panPan="Pan paniscus",
-        panTro="Pan troglodytes",
-        papAnu="Papio anubis",
-        papHam="Papio hamadryas",
-        petMar="Petromyzon marinus",
-        ponAbe="Pongo abelii",
-        priPac="Pristionchus pacificus",
-        proCap="Procavia capensis",
-        pteVam="Pteropus vampyrus",
-
-        rheMac="Macaca mulatta",
-        rhiRox="Rhinopithecus roxellana",
-        rn="Rattus norvegicus",
-
-        sacCer="Saccharomyces cerevisiae",
-        saiBol="Saimiri sciureus",
-        sarHar="Sarcophilus harrisii",
-        sorAra="Sorex araneus",
-        speTri="Spermophilus tridecemlineatus",
-        strPur="Strongylocentrotus purpuratus",
-        susScr="Sus scrofa",
-
-        taeGut="Taeniopygia guttata",
-        tarSyr="Tarsius syrichta",
-        tetNig="Tetraodon nigroviridis",
-        triMan="Trichechus manatus",
-        tupBel="Tupaia belangeri",
-        turTru="Tursiops truncatus",
-
-        vicPac="Vicugna pacos",
-
-        xenLae="Xenopus laevis",
-        xenTro="Xenopus tropicalis"
-    )
-    genome2org[genome]
 }
 
 
@@ -273,7 +238,7 @@ UCSC_dbselect <- function(dbname, from, columns=NULL, where=NULL,
     columns <- if (is.null(columns)) "*" else paste0(columns, collapse=",")
     SQL <- sprintf("SELECT %s FROM %s", columns, from)
     if (!is.null(where)) {
-        stopifnot(isSingleString(where))
+        stopifnot(isSingleString(where))  # sanity check
         SQL <- paste(SQL, "WHERE", where)
     }
     dbconn <- dbConnect(RMariaDB::MariaDB(), dbname=dbname,

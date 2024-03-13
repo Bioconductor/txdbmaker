@@ -27,9 +27,9 @@ supportedUCSCtables <- function(genome="hg19")
 {
     if (!isSingleString(genome))
         stop(wmsg("'genome' must be a single string"))
-    df <- list_UCSC_primary_tables(genome, group="genes")
+    df <- list_UCSC_primary_tables(genome, track_group="genes")
     expected_colnames <- c("primary_table", "track", "type",
-                           "group", "composite_track")
+                           "track_group", "composite_track")
     stopifnot(identical(colnames(df), expected_colnames))
     keep_idx <- grep("\\<genePred\\>", df$type)
     df <- S4Vectors:::extract_data_frame_rows(df, keep_idx)
@@ -613,7 +613,7 @@ browseUCSCtrack <- function(genome="hg19",
     message("Prepare the 'metadata' data frame ... ", appendLF=FALSE)
     if (!isSingleStringOrNA(miRBaseBuild))
         stop(wmsg("'miRBaseBuild' must be a a single string or NA"))
-    organism <- lookup_organism_by_UCSC_genome(genome)
+    organism <- get_organism_for_UCSC_genome(genome)
     if (is.na(taxonomyId)) {
         taxonomyId <- GenomeInfoDb:::lookup_tax_id_by_organism(organism)
     } else {

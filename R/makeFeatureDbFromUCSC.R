@@ -58,7 +58,7 @@
 {
     message("Prepare the 'metadata' data frame ... ",
             appendLF=FALSE)
-    organism <- lookup_organism_by_UCSC_genome(genome)
+    organism <- get_organism_for_UCSC_genome(genome)
     if (is.na(taxonomyId)) {
         taxonomyId <- GenomeInfoDb:::lookup_tax_id_by_organism(organism)
     } else {
