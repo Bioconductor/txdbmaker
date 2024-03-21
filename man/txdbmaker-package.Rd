@@ -1,8 +1,8 @@
 \name{txdbmaker-package}
+\docType{package}
 
 \alias{txdbmaker-package}
 \alias{txdbmaker}
-\docType{package}
 
 \title{Tools for making TxDb objects from genomic annotations}
 

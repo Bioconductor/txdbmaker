@@ -321,12 +321,13 @@ browseUCSCtrack <- function(genome="hg19",
     message("Download the ", tablename, " table ... ", appendLF=FALSE)
     ans <- UCSC_dbselect(genome, tablename, columns=columns, where=where)
     message("OK")
-    ## DBI is returning blobs for exon starts and stops, so the old check fails
+    ## DBI is returning blobs for exon starts and stops, so the old check
+    ## fails!
+    #current_classes <- head(sapply(ans, class),
+    #                        n=length(.UCSC_TXCOL2CLASS))
+    #stopifnot(identical(current_classes, .UCSC_TXCOL2CLASS))
     stopifnot(all(mapply(function(x, y) is(x, y),
                          ans[names(.UCSC_TXCOL2CLASS)], .UCSC_TXCOL2CLASS)))
-    ##current_classes <- head(sapply(ans, class),
-    ##                        n=length(.UCSC_TXCOL2CLASS))
-    ##stopifnot(identical(current_classes, .UCSC_TXCOL2CLASS))
     ans$exonStarts <- toListOfIntegerVectors(ans$exonStarts)
     ans$exonEnds <- toListOfIntegerVectors(ans$exonEnds)
     if (!identical(lengths(ans$exonStarts),
