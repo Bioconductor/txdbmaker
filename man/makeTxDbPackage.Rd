@@ -114,9 +114,9 @@ makePackageName(txdb)
     \code{"scerevisiae_gene_ensembl"}, etc in the ensembl database.
     See the examples section below for how to discover which datasets
     are available in a given BioMart database.}
-  \item{genome}{genome abbreviation used by UCSC and obtained by
-    \code{\link[rtracklayer]{ucscGenomes}()[ , "db"]}.
-    For example: \code{"hg18"}.}
+  \item{genome}{name of a UCSC genome assembly e.g. \code{"hg19"} or
+    \code{"panTro6"}. Get the list of UCSC genomes currently available
+    with \code{\link{list_UCSC_genomes}()[ , "genome"]}.}
   \item{track}{name of the UCSC track.  Use
     \code{supportedUCSCFeatureDbTracks} to get the list of available
         tracks for a particular genome}
@@ -205,7 +205,7 @@ makePackageName(txdb)
   \code{\link{makeTxDbFromUCSC}},
   \code{\link{makeTxDbFromBiomart}},
   \code{\link{makeTxDb}},
-  \code{\link[rtracklayer]{ucscGenomes}}
+  \code{\link{list_UCSC_genomes}}
 }
 
 \examples{

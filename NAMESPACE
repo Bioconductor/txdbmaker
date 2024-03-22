@@ -30,6 +30,9 @@ importFrom(biomaRt, getBM, listAttributes, listDatasets, listFilters,
                     listMarts, useDataset, useEnsembl, useEnsemblGenomes)
 
 export(
+  ## UCSC-utils.R:
+  list_UCSC_genomes,
+
   ## makeTxDb.R:
   makeTxDb,
 

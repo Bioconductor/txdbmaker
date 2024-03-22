@@ -46,8 +46,8 @@ makeFeatureDbFromUCSC(
         taxonomyId=NA)
 }
 \arguments{
-  \item{genome}{genome abbreviation used by UCSC and obtained by
-    \code{\link[rtracklayer]{ucscGenomes}()[ , "db"]}.
+  \item{genome}{genome abbreviation used by UCSC and listed in
+    \code{\link{list_UCSC_genomes}()[ , "genome"]}.
         For example: \code{"hg18"}.}
   \item{track}{name of the UCSC track.  Use
     \code{supportedUCSCFeatureDbTracks} to get the list of available
@@ -104,16 +104,14 @@ makeFeatureDbFromUCSC(
 \author{M. Carlson}
 
 \seealso{
-  \code{\link[rtracklayer]{ucscGenomes}},
+  \code{\link{list_UCSC_genomes}}
   % \code{\link{makeFeatureDbFromBiomart}},
   % \code{\link{makeFeatureDb}}
 }
 
 \examples{
 ## Display the list of genomes available at UCSC:
-library(GenomicFeatures)
-library(rtracklayer)
-ucscGenomes()[ , "db"]
+list_UCSC_genomes()[ , "genome"]
 
 ## Display the list of Tracks supported by makeFeatureDbFromUCSC():
 # supportedUCSCFeatureDbTracks("mm10")

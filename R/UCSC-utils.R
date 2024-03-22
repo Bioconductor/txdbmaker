@@ -2,7 +2,14 @@
 ### Utilities for fetching data from UCSC
 ### -------------------------------------------------------------------------
 ###
-
+###
+### IMPORTANT NOTE: All the functionality implemented in this file is now
+### available in the UCSC.utils package.
+###
+### TODO: Use UCSC.utils and get rid of this file. Also remove
+### man/list_UCSC_genomes.Rd and go thru every occurences of list_UCSC_genomes
+### in the other man pages to fix links/redirections.
+###
 
 .UCSC_REST_API_URL <- "https://api.genome.ucsc.edu"
 
@@ -10,27 +17,59 @@
 
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### .API_query()
+###
+
+.API_query <- function(endpoint, query=list())
+{
+    stopifnot(isSingleString(endpoint), nzchar(endpoint), is.list(query))
+    if (length(query) != 0L)
+        stopifnot(!is.null(names(query)))
+    url <- paste0(.UCSC_REST_API_URL, "/", endpoint)
+    GET(url, query=query)
+}
+
+.parse_json <- function(response)
+{
+    parsed_json <- fromJSON(content(response, as="text", encoding="UTF-8"))
+    ## Sanity checks.
+    stopifnot(is.list(parsed_json), !is.null(names(parsed_json)))
+    parsed_json
+}
+
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### list_UCSC_genomes()
 ###
 
-.get_UCSC_genomes <- function(recache=FALSE)
+.API_list_genomes <- function()
+{
+    endpoint <- "list/ucscGenomes"
+    response <- .API_query(endpoint)
+    if (response[["status_code"]] != 200L)
+        stop(wmsg("failed to get list of UCSC genomes from ",
+                  .UCSC_REST_API_URL))
+
+    ans <- .parse_json(response)[["ucscGenomes"]]
+    ## Sanity check.
+    stopifnot(is.list(ans))
+    ans
+}
+
+.list_UCSC_genomes <- function(recache=FALSE)
 {
     if (!isTRUEorFALSE(recache))
         stop(wmsg("'recache' must be TRUE or FALSE"))
-    ans <- .cached_rest_api_results[["ucscGenomes"]]
+    key <- "GENOMES"
+    ans <- .cached_rest_api_results[[key]]
     if (is.null(ans) || recache) {
-        url <- .UCSC_REST_API_URL
-        response <- GET(url, path="list/ucscGenomes")
-        if (response$status_code != 200L)
-            stop(wmsg("failed to retrieve list of UCSC genomes"))
-        json <- content(response, as="text", encoding="UTF-8")
-        ans <- fromJSON(json)[["ucscGenomes"]]
-        stopifnot(is.list(ans))  # sanity check
-        .cached_rest_api_results[["ucscGenomes"]] <- ans
+        ans <- .API_list_genomes()
+        .cached_rest_api_results[[key]] <- ans
     }
     ans
 }
 
+### Exported!
 ### Returns a data.frame with 1 row per genome and 5 columns:
 ### organism, genome, common_name, tax_id, description.
 ### A few things align with GenomeInfoDb::registered_UCSC_genomes():
@@ -44,17 +83,17 @@ list_UCSC_genomes <- function(organism=NA, recache=FALSE)
 {
     if (!isSingleStringOrNA(organism))
         stop(wmsg("'organism' must be a single string or NA"))
-    genomes <- .get_UCSC_genomes(recache=recache)
+    genomes <- .list_UCSC_genomes(recache=recache)
 
     ans_organism <- factor(vapply(genomes,
         function(genome) {
             stopifnot(is.list(genome))  # sanity check
-            genome$scientificName
+            genome[["scientificName"]]
         },
         character(1), USE.NAMES=FALSE
     ))
     ans_common_name <- factor(vapply(genomes,
-        function(genome) genome$organism,
+        function(genome) genome[["organism"]],
         character(1), USE.NAMES=FALSE
     ))
     if (!is.na(organism)) {
@@ -67,11 +106,11 @@ list_UCSC_genomes <- function(organism=NA, recache=FALSE)
 
     ans_genome <- names(genomes)
     ans_tax_id <- vapply(genomes,
-        function(genome) as.integer(genome$taxId),
+        function(genome) as.integer(genome[["taxId"]]),
         integer(1), USE.NAMES=FALSE
     )
     ans_description <- vapply(genomes,
-        function(genome) genome$description,
+        function(genome) genome[["description"]],
         character(1), USE.NAMES=FALSE
     )
 
@@ -82,7 +121,8 @@ list_UCSC_genomes <- function(organism=NA, recache=FALSE)
         tax_id=ans_tax_id,
         description=ans_description
     )
-    oo <- GenomeInfoDb:::order_organism_genome_pairs(ans$organism, ans$genome)
+    oo <- GenomeInfoDb:::order_organism_genome_pairs(ans[ , "organism"],
+                                                     ans[ , "genome"])
     S4Vectors:::extract_data_frame_rows(ans, oo)
 }
 
