@@ -77,23 +77,21 @@ makeFeatureDbFromUCSC(
     valid taxId here.}
 }
 \details{
-  \code{makeFeatureDbFromUCSC} {is a convenience function that builds a
-        tiny database from one of the UCSC track tables.}
-  \code{supportedUCSCFeatureDbTracks} {a convenience function that
+  \code{makeFeatureDbFromUCSC} is a convenience function that builds a
+        tiny database from one of the UCSC track tables.
+
+  \code{supportedUCSCFeatureDbTracks} is a convenience function that
         returns potential track names that could be used to make
-        FeatureDb objects}
-  \code{supportedUCSCFeatureDbTables} {a convenience function that
+        FeatureDb objects.
+
+  \code{supportedUCSCFeatureDbTables} is a convenience function that
         returns potential table names for FeatureDb objects (table names
-        go with a track name)}
-  \code{UCSCFeatureDbTableSchema} {A convenience function that creates a
+        go with a track name).
+
+  \code{UCSCFeatureDbTableSchema} is a convenience function that creates a
         named vector of types for all the fields that can potentially be
         supported for a given track.  By default, this will be called on
-        your specified tablename to include all of the fields in a track.}
-  
-  % \code{\link{makeFeatureDb}}
-  % function.
-  % See \code{?\link{makeFeatureDbFromBiomart}} for a similar function
-  % that feeds data from a BioMart database.
+        your specified tablename to include all of the fields in a track.
 }
 
 \value{
@@ -105,8 +103,6 @@ makeFeatureDbFromUCSC(
 
 \seealso{
   \code{\link{list_UCSC_genomes}}
-  % \code{\link{makeFeatureDbFromBiomart}},
-  % \code{\link{makeFeatureDb}}
 }
 
 \examples{
