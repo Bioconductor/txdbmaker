@@ -1,7 +1,3 @@
-- Use UCSC.utils and get rid of R/UCSC-utils.R. Also remove
-  man/list_UCSC_genomes.Rd and go thru every occurences of
-  list_UCSC_genomes in the other man pages to fix links/redirections.
-
 - Deprecate makeFeatureDbFromUCSC(), supportedUCSCFeatureDb*(), and
   UCSCFeatureDbTableSchema() in BioC 3.20. Not a single Bioconductor
   package is using this. Then defunct in BioC 3.21. Once defunct, we

@@ -116,7 +116,7 @@ makePackageName(txdb)
     are available in a given BioMart database.}
   \item{genome}{name of a UCSC genome assembly e.g. \code{"hg19"} or
     \code{"panTro6"}. Get the list of UCSC genomes currently available
-    with \code{\link{list_UCSC_genomes}()[ , "genome"]}.}
+    with \code{\link[UCSC.utils]{list_UCSC_genomes}()[ , "genome"]}.}
   \item{track}{name of the UCSC track.  Use
     \code{supportedUCSCFeatureDbTracks} to get the list of available
         tracks for a particular genome}
@@ -205,7 +205,7 @@ makePackageName(txdb)
   \code{\link{makeTxDbFromUCSC}},
   \code{\link{makeTxDbFromBiomart}},
   \code{\link{makeTxDb}},
-  \code{\link{list_UCSC_genomes}}
+  \code{\link[UCSC.utils]{list_UCSC_genomes}}
 }
 
 \examples{

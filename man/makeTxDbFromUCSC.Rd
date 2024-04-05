@@ -33,7 +33,7 @@ browseUCSCtrack(genome="hg19", tablename="knownGene",
   \item{genome}{
     The name of a UCSC genome assembly e.g. \code{"hg19"} or \code{"panTro6"}.
     Get the list of UCSC genomes currently available with
-    \code{\link{list_UCSC_genomes}()[ , "genome"]}.
+    \code{\link[UCSC.utils]{list_UCSC_genomes}()[ , "genome"]}.
   }
   \item{tablename}{
     The name of the UCSC table containing the transcript genomic locations
@@ -125,7 +125,8 @@ browseUCSCtrack(genome="hg19", tablename="knownGene",
           for making a \link[GenomicFeatures]{TxDb} object from a
           \link[GenomicRanges]{GRanges} object, or from a GFF or GTF file.
 
-    \item \code{\link{list_UCSC_genomes}} to get the list of UCSC genomes.
+    \item \code{\link[UCSC.utils]{list_UCSC_genomes}} in the \pkg{UCSC.utils}
+          package to get the list of UCSC genomes.
 
     \item The \code{\link{supportedMiRBaseBuildValues}} function for
           listing all the possible values for the \code{miRBaseBuild}
@@ -142,6 +143,7 @@ browseUCSCtrack(genome="hg19", tablename="knownGene",
 
 \examples{
 ## Use list_UCSC_genomes() to obtain the list of all UCSC genomes:
+library(UCSC.utils)
 list_UCSC_genomes()[ , "genome"]
 
 ## To search genomes for a particular organism:

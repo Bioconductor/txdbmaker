@@ -14,6 +14,7 @@ importFrom(RSQLite, SQLite)
 import(BiocGenerics)
 import(S4Vectors)
 import(IRanges)
+import(UCSC.utils)
 import(GenomeInfoDb)
 import(AnnotationDbi)
 import(GenomicRanges)
@@ -30,9 +31,6 @@ importFrom(biomaRt, getBM, listAttributes, listDatasets, listFilters,
                     listMarts, useDataset, useEnsembl, useEnsemblGenomes)
 
 export(
-  ## UCSC-utils.R:
-  list_UCSC_genomes,
-
   ## makeTxDb.R:
   makeTxDb,
 

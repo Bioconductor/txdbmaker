@@ -27,13 +27,13 @@ supportedUCSCtables <- function(genome="hg19")
 {
     if (!isSingleString(genome))
         stop(wmsg("'genome' must be a single string"))
-    df <- list_UCSC_primary_tables(genome, track_group="genes")
-    expected_colnames <- c("primary_table", "track", "type",
-                           "track_group", "composite_track")
+    df <- list_UCSC_tracks(genome, group="genes")
+    expected_colnames <- c("track", "primary_table", "type",
+                           "group", "composite_track")
     stopifnot(identical(colnames(df), expected_colnames))
     keep_idx <- grep("\\<genePred\\>", df$type)
     df <- S4Vectors:::extract_data_frame_rows(df, keep_idx)
-    ans <- df[ , c(1:2, 5L)]
+    ans <- df[ , c(2:1, 5L)]
     colnames(ans)[[1L]] <- "tablename"
     ans
 }
@@ -321,21 +321,17 @@ browseUCSCtrack <- function(genome="hg19",
     message("Download the ", tablename, " table ... ", appendLF=FALSE)
     ans <- UCSC_dbselect(genome, tablename, columns=columns, where=where)
     message("OK")
-    ## DBI is returning blobs for exon starts and stops, so the old check
-    ## fails!
-    #current_classes <- head(sapply(ans, class),
-    #                        n=length(.UCSC_TXCOL2CLASS))
-    #stopifnot(identical(current_classes, .UCSC_TXCOL2CLASS))
-    stopifnot(all(mapply(function(x, y) is(x, y),
-                         ans[names(.UCSC_TXCOL2CLASS)], .UCSC_TXCOL2CLASS)))
-    ans$exonStarts <- toListOfIntegerVectors(ans$exonStarts)
-    ans$exonEnds <- toListOfIntegerVectors(ans$exonEnds)
-    if (!identical(lengths(ans$exonStarts),
-                   ans$exonCount))
+    if (!is.list(ans[ , "exonStarts"]))
+        ans[ , "exonStarts"] <- toListOfIntegerVectors(ans[ , "exonStarts"])
+    if (!is.list(ans[ , "exonEnds"]))
+        ans[ , "exonEnds"] <- toListOfIntegerVectors(ans[ , "exonEnds"])
+    current_classes <-vapply(ans[seq_along(.UCSC_TXCOL2CLASS)], class,
+                             character(1), USE.NAMES=TRUE)
+    stopifnot(identical(current_classes, .UCSC_TXCOL2CLASS))
+    if (!identical(lengths(ans[ , "exonStarts"]), ans[ , "exonCount"]))
         stop(wmsg("UCSC data anomaly in table ", genome, ".", tablename, ": ",
                   "columns exonStarts and exonCount are inconsistent"))
-    if (!identical(lengths(ans$exonEnds),
-                   ans$exonCount))
+    if (!identical(lengths(ans[ , "exonEnds"]), ans[ , "exonCount"]))
         stop(wmsg("UCSC data anomaly in table ", genome, ".", tablename, ": ",
                   "columns exonEnds and exonCount are inconsistent"))
     ans

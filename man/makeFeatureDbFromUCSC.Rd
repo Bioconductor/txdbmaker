@@ -47,7 +47,7 @@ makeFeatureDbFromUCSC(
 }
 \arguments{
   \item{genome}{genome abbreviation used by UCSC and listed in
-    \code{\link{list_UCSC_genomes}()[ , "genome"]}.
+    \code{\link[UCSC.utils]{list_UCSC_genomes}()[ , "genome"]}.
         For example: \code{"hg18"}.}
   \item{track}{name of the UCSC track.  Use
     \code{supportedUCSCFeatureDbTracks} to get the list of available
@@ -102,11 +102,12 @@ makeFeatureDbFromUCSC(
 \author{M. Carlson}
 
 \seealso{
-  \code{\link{list_UCSC_genomes}}
+  \code{\link[UCSC.utils]{list_UCSC_genomes}} in the \pkg{UCSC.utils} package
 }
 
 \examples{
 ## Display the list of genomes available at UCSC:
+library(UCSC.utils)
 list_UCSC_genomes()[ , "genome"]
 
 ## Display the list of Tracks supported by makeFeatureDbFromUCSC():
