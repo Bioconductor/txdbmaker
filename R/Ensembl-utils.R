@@ -109,7 +109,14 @@ Ensembl_listMySQLCoreDirs <- function(mysql_url, release=NA, recache=FALSE)
         shortname0 <- strsplit(dataset, "_", fixed=TRUE)[[1L]][1L]
     }
     core_dir <- core_dirs[shortnames == shortname0]
-    core_dir <- grep("37$", core_dir, invert=!use.grch37, value=TRUE)
+    ## Starting with Ensembl 112, ftp.ensembl.org/pub/release-<version>/mysql/
+    ## contains two core subdirs for homo_sapiens:
+    ## homo_sapiens_core_<version>_38/ and homo_sapiens_core_<version>_37/.
+    ## We filter out the latter.
+    if (!use.grch37)
+        core_dir <- grep(
+            "^homo_sapiens_core_.*_37$", core_dir, invert=TRUE, value=TRUE
+        )
     if (length(core_dir) != 1L)
         stop("found 0 or more than 1 subdir for \"", dataset,
              "\" dataset at ", mysql_url)
