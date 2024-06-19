@@ -27,7 +27,7 @@
   \pkg{txdbmaker} package to be already installed.
 
   Alternatively this vignette should also be available online here:
-  \link{https://bioconductor.org/packages/release/bioc/vignettes/txdbmaker/inst/doc/txdbmaker.html}
+  \url{https://bioconductor.org/packages/release/bioc/vignettes/txdbmaker/inst/doc/txdbmaker.html}
 }
 
 \keyword{package}
