@@ -97,7 +97,8 @@ Ensembl_listMySQLCoreDirs <- function(mysql_url, release=NA, recache=FALSE)
     core_dirs[grep(pattern, core_dirs, fixed=TRUE)]
 }
 
-.Ensembl_getMySQLCoreDir <- function(dataset, mysql_url, release=NA)
+.Ensembl_getMySQLCoreDir <-
+    function(dataset, mysql_url, release=NA, use.grch37=FALSE)
 {
     core_dirs <- Ensembl_listMySQLCoreDirs(mysql_url, release=release)
     trimmed_core_dirs <- sub("_core_.*$", "", core_dirs)
@@ -108,6 +109,7 @@ Ensembl_listMySQLCoreDirs <- function(mysql_url, release=NA, recache=FALSE)
         shortname0 <- strsplit(dataset, "_", fixed=TRUE)[[1L]][1L]
     }
     core_dir <- core_dirs[shortnames == shortname0]
+    core_dir <- grep("37$", core_dir, invert=!use.grch37, value=TRUE)
     if (length(core_dir) != 1L)
         stop("found 0 or more than 1 subdir for \"", dataset,
              "\" dataset at ", mysql_url)
@@ -115,9 +117,12 @@ Ensembl_listMySQLCoreDirs <- function(mysql_url, release=NA, recache=FALSE)
 }
 
 ### Return URL of Ensemble Core DB (FTP access).
-.Ensembl_getMySQLCoreUrl <- function(dataset, mysql_url, release=NA)
+.Ensembl_getMySQLCoreUrl <-
+    function(dataset, mysql_url, release=NA, use.grch37=FALSE)
 {
-    core_dir <- .Ensembl_getMySQLCoreDir(dataset, mysql_url, release=release)
+    core_dir <- .Ensembl_getMySQLCoreDir(
+        dataset, mysql_url, release=release, use.grch37=use.grch37
+    )
     paste0(mysql_url, core_dir, "/")
 }
 
@@ -272,7 +277,9 @@ get_organism_from_Ensembl_Mart_dataset <- function(dataset, release=NA,
                                                    kingdom=NA)
 {
     mysql_url <- ftp_url_to_Ensembl_mysql(release, use.grch37, kingdom)
-    core_dir <- .Ensembl_getMySQLCoreDir(dataset, mysql_url, release=release)
+    core_dir <- .Ensembl_getMySQLCoreDir(
+        dataset, mysql_url, release=release, use.grch37=use.grch37
+    )
     organism <- sub("_core.*", "", core_dir)
     organism <- sub("_", " ", organism)
     substr(organism, 1L, 1L) <- toupper(substr(organism, 1L, 1L))
@@ -291,7 +298,9 @@ fetchChromLengthsFromEnsembl <- function(dataset, release=NA,
                                          extra_seqnames=NULL)
 {
     mysql_url <- ftp_url_to_Ensembl_mysql(release, use.grch37, kingdom)
-    core_url <- .Ensembl_getMySQLCoreUrl(dataset, mysql_url, release=release)
+    core_url <- .Ensembl_getMySQLCoreUrl(
+        dataset, mysql_url, release=release, use.grch37=use.grch37
+    )
     .Ensembl_fetchChromLengthsFromCoreUrl(core_url,
                                           extra_seqnames=extra_seqnames)
 }
