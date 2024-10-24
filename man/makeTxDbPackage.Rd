@@ -110,8 +110,8 @@ makePackageName(txdb)
     databases with compatible transcript annotations.}
   \item{dataset}{which dataset from BioMart. For example:
     \code{"hsapiens_gene_ensembl"}, \code{"mmusculus_gene_ensembl"},
-    \code{"dmelanogaster_gene_ensembl"}, \code{"celegans_gene_ensembl"},
-    \code{"scerevisiae_gene_ensembl"}, etc in the ensembl database.
+    \code{"dmelanogaster_gene_ensembl"}, \code{"celegans_gene_ensembl"}, etc
+    in the ensembl database.
     See the examples section below for how to discover which datasets
     are available in a given BioMart database.}
   \item{genome}{name of a UCSC genome assembly e.g. \code{"hg19"} or

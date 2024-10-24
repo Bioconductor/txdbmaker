@@ -1598,8 +1598,7 @@ test_makeTxDbFromGRanges_on_Ensembl_gtf <- function(all=FALSE)
                        "gallus_gallus",
                        "homo_sapiens",
                        "mus_musculus",
-                       "rattus_norvegicus",
-                       "saccharomyces_cerevisiae")
+                       "rattus_norvegicus")
     }
     norganism <- length(organisms)
     for (i in seq_len(norganism)) {

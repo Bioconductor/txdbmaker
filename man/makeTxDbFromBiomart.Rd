@@ -42,7 +42,7 @@ getChromInfoFromBiomart(biomart="ENSEMBL_MART_ENSEMBL",
   \item{dataset}{which dataset from BioMart. For example:
     \code{"hsapiens_gene_ensembl"}, \code{"mmusculus_gene_ensembl"},
     \code{"dmelanogaster_gene_ensembl"}, \code{"celegans_gene_ensembl"},
-    \code{"scerevisiae_gene_ensembl"}, etc in the ensembl database.
+    etc in the ensembl database.
     See the examples section below for how to discover which datasets
     are available in a given BioMart database.}
   \item{transcript_ids}{optionally, only retrieve transcript
@@ -214,12 +214,6 @@ yeast_txdb <- makeTxDbFromBiomart(biomart="fungi_mart",
                                   dataset="scerevisiae_eg_gene",
                                   host="https://fungi.ensembl.org")
 yeast_txdb
-
-## Note that the dataset for Yeast on Ensembl Fungi is not necessarily
-## the same as on the main Ensembl database:
-yeast_txdb0 <- makeTxDbFromBiomart(dataset="scerevisiae_gene_ensembl")
-all(transcripts(yeast_txdb0) \%in\% transcripts(yeast_txdb))
-all(transcripts(yeast_txdb) \%in\% transcripts(yeast_txdb0))
 
 ## -----------------------
 ## --- Ensembl Metazoa ---
