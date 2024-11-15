@@ -283,7 +283,7 @@
 .makeTxDb_normarg_chrominfo <- function(chrominfo)
 {
     .REQUIRED_COLS <- c("chrom", "length")
-    .OPTIONAL_COLS <- "is_circular"
+    .OPTIONAL_COLS <- c("is_circular", "genome")
     check_colnames(chrominfo, .REQUIRED_COLS, .OPTIONAL_COLS, "chrominfo")
     ## Check 'chrom'.
     if (!.is_character_or_factor(chrominfo$chrom)
@@ -305,6 +305,14 @@
         chrominfo$is_circular <- rep.int(NA, nrow(chrominfo))
     } else if (!is.logical(chrominfo$is_circular)) {
         stop(wmsg("'chrominfo$is_circular' must be a logical vector"))
+    }
+    ## Check 'genome'.
+    if (!has_col(chrominfo, "genome")) {
+        warning(wmsg("genome version information ",
+                     "is not available for this TxDb object"))
+        chrominfo$genome <- rep.int(NA, nrow(chrominfo))
+    } else if (!is.character(chrominfo$genome)) {
+        stop(wmsg("'chrominfo$genome' must be a character vector"))
     }
     chrominfo
 }
@@ -695,6 +703,17 @@ makeTxDb <- function(transcripts, splicings,
                           splicings_internal_cds_id,
                           splicings$cds_phase)
     .write_gene_table(conn, genes$gene_id, genes_internal_tx_id)
+    ## if input metadata has no specified genome and it is
+    ## available in 'chrominfo', try to fetch it from there
+    if (!"Genome" %in% metadata$name && !is.null(chrominfo$genome)) {
+        genome <- unique(chrominfo$genome)
+        if (length(genome) == 1L) { ## only if no conflicting genomes
+            if (is.null(metadata))
+                metadata <- data.frame(name="Genome", value=genome)
+            else if (identical(colnames(metadata), c("name", "value")))
+                metadata <- rbind(metadata, c("Genome", genome))
+        }
+    }
     .write_metadata_table(conn, metadata)  # must come last!
     GenomicFeatures:::TxDb(conn)
 }

@@ -213,7 +213,8 @@ extract_chromlengths_from_seq_region <- function(seq_region,
         keep_me <- keep_me | (seq_region$seq_region_id %in% seq_region_ids)
     i1 <- which(keep_me)
     j1 <- c("seq_region_id", "name", "length",
-            "coord_system_name", "coord_system_rank")
+            "coord_system_name", "coord_system_rank",
+            "coord_system_version")
     ans <- seq_region[i1, j1, drop=FALSE]
 
     ## 2nd filtering: Keep only "toplevel" sequences that are not LRGs +
@@ -231,7 +232,8 @@ extract_chromlengths_from_seq_region <- function(seq_region,
     if (!is.null(seq_region_ids))
         keep_me <- keep_me | (ans$seq_region_id %in% seq_region_ids)
     i2 <- which(keep_me)
-    j2 <- c("seq_region_id", "name", "length", "coord_system_rank")
+    j2 <- c("seq_region_id", "name", "length", "coord_system_rank",
+            "coord_system_version")
     ans <- ans[i2, j2, drop=FALSE]
 
     ## Ordering: First by rank, then by name.
@@ -248,7 +250,7 @@ extract_chromlengths_from_seq_region <- function(seq_region,
     if (!is.null(seq_region_ids))
         keep_me <- keep_me | (ans$seq_region_id %in% seq_region_ids)
     i3 <- which(keep_me)
-    j3 <- c("seq_region_id", "name", "length")
+    j3 <- c("seq_region_id", "name", "length", "coord_system_version")
     ans <- ans[i3, j3, drop=FALSE]
 
     ## Final tidying.
