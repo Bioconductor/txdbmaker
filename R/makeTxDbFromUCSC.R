@@ -18,7 +18,8 @@
     exonEnds="list"       # list of raw vectors
 )
 
-### We support all tables in the "genes" group that have type "genePred".
+### We support all tables in the "genes" group of type "genePred" or
+### "bigGenePred" (or any other "*genePred" type).
 ### This is because tables of other types like "bed 3" or "psl" don't have
 ### the expected columns.
 ### Returns a data.frame with 1 row per supported table and 3 columns:
@@ -31,7 +32,7 @@ supportedUCSCtables <- function(genome="hg19")
     expected_colnames <- c("track", "primary_table", "type",
                            "group", "composite_track")
     stopifnot(identical(colnames(df), expected_colnames))
-    keep_idx <- grep("\\<genePred\\>", df$type)
+    keep_idx <- grep("genePred\\>", df$type, ignore.case=TRUE)
     df <- S4Vectors:::extract_data_frame_rows(df, keep_idx)
     ans <- df[ , c(2:1, 5L)]
     colnames(ans)[[1L]] <- "tablename"
