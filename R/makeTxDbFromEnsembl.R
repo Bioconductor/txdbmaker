@@ -257,7 +257,8 @@
         length=chromlengths$length,
         is_circular=GenomeInfoDb:::make_circ_flags_from_circ_seqs(
                                                    chromlengths$name,
-                                                   circ_seqs)
+                                                   circ_seqs),
+        genome=chromlengths$coord_system_version
     )
     message("OK")
     chrominfo
