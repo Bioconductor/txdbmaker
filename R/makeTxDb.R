@@ -703,7 +703,7 @@ makeTxDb <- function(transcripts, splicings,
                           splicings_internal_cds_id,
                           splicings$cds_phase)
     .write_gene_table(conn, genes$gene_id, genes_internal_tx_id)
-    ## if input metadata has no specified genome and it is
+    ## If input metadata has no specified genome and it is
     ## available in 'chrominfo', try to fetch it from there
     if (!"Genome" %in% metadata$name && !is.null(chrominfo$genome)) {
         genome <- unique(chrominfo$genome)
