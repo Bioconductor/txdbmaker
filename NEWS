@@ -1,3 +1,16 @@
+VERSION 1.4.0
+-------------
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
+    o Add genome version to TxDb returned by makeTxDbFromEnsembl().
+      Author: Robert Castelo
+
+BUG FIXES
+
+    o Fix bug in supportedUCSCtables(). See commit 05d278f for the details.
+
+
 VERSION 1.2.0
 -------------
 
