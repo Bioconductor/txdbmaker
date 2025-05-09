@@ -1,7 +1,7 @@
-- Deprecate makeFeatureDbFromUCSC(), supportedUCSCFeatureDb*(), and
-  UCSCFeatureDbTableSchema() in BioC 3.20. Not a single Bioconductor
-  package is using this. Then defunct in BioC 3.21. Once defunct, we
-  can get rid of rtracklayer dependency.
+- Maybe deprecate makeFeatureDbFromUCSC(), supportedUCSCFeatureDb*(),
+  and UCSCFeatureDbTableSchema() in BioC 3.22. Not a single Bioconductor
+  package seems to be using this. Then defunct in BioC 3.23. Once defunct,
+  we can get rid of rtracklayer dependency.
 
 - makeTxDbFromUCSC(): Address the CDS non-completeness issue.
   The status of the CDS (complete or not) can be inferred from the

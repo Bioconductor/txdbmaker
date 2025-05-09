@@ -92,7 +92,20 @@ makeTxDbFromEnsembl(organism="Homo sapiens",
 }
 
 \examples{
-txdb <- makeTxDbFromEnsembl("Saccharomyces cerevisiae",
-                            server="useastdb.ensembl.org")
+## Note that, right after a new Ensembl release, it can take up to 24 or
+## 48 hours for the MySQL server at useastdb.ensembl.org to get updated
+## with the new release. During that period, the server will be out-of-sync
+## with the content at https://ftp.ensembl.org/pub/current_mysql/, which
+## can cause makeTxDbFromEnsembl() to fail with an error like:
+##   Error: Failed to connect: Unknown database 'some_organism_core_114_4'
+## To avoid running into this issue in the context of this example, we
+## first try useastdb.ensembl.org, and, if it fails, we fall back to
+## ensembldb.ensembl.org.
+txdb <- try(makeTxDbFromEnsembl("Saccharomyces cerevisiae",
+                                server="useastdb.ensembl.org"))
+if (inherits(txdb, "try-error")) {
+    txdb <- try(makeTxDbFromEnsembl("Saccharomyces cerevisiae",
+                                    server="ensembldb.ensembl.org"))
+}
 txdb
 }

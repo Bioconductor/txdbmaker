@@ -341,7 +341,7 @@ makeTxDbPackageFromBiomart <- function(
         stop("'miRBaseBuild' must be supplied as a single element",
              " character vector or be NA.")}
     if (!missing(port))
-        warning("The 'port' argument is deprecated and will be ignored.")
+        .Defunct(msg="The 'port' argument is defunct.")
     ## Make the DB
     txdb <- makeTxDbFromBiomart(biomart=biomart,
                                 dataset=dataset,

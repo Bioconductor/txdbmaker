@@ -288,7 +288,7 @@ getChromInfoFromBiomart <- function(biomart="ENSEMBL_MART_ENSEMBL",
                                     port)
 {
     if (!missing(port))
-        warning("The 'port' argument is deprecated and will be ignored.")
+        .Defunct(msg="The 'port' argument is defunct.")
     mart <- .useMart2(biomart=biomart, dataset=dataset, host=host)
     id_prefix <- .normarg_id_prefix(id_prefix)
     recognized_attribs <- recognizedBiomartAttribs(id_prefix)
@@ -788,7 +788,7 @@ makeTxDbFromBiomart <- function(biomart="ENSEMBL_MART_ENSEMBL",
                                 miRBaseBuild=NA)
 {
     if (!missing(port))
-        warning("The 'port' argument is deprecated and will be ignored.")
+        .Defunct(msg="The 'port' argument is defunct.")
     mart <- .useMart2(biomart=biomart, dataset=dataset, host=host)
     id_prefix <- .normarg_id_prefix(id_prefix)
     filter <- .add_tx_id_filter(filter, transcript_ids, id_prefix)
