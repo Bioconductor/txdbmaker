@@ -1,6 +1,6 @@
 ###
 
-format_txdb_dump <- GenomicFeatures:::.format_txdb_dump
+format_txdb_dump <- GenomicFeatures:::format_txdb_dump
 
 test_makeTxDbFromGRanges_empty <- function()
 {
