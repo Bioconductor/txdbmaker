@@ -87,8 +87,6 @@ makeTxDbPackage(txdb,
                 provider=NULL,
                 providerVersion=NULL)
 
-supportedMiRBaseBuildValues()
-
 makePackageName(txdb)
 }
 \arguments{
@@ -163,11 +161,7 @@ makePackageName(txdb)
     provided (or inferred) will be used to look up the correct value for
     this.  But you can use this argument to override that and supply
     your own valid taxId here}
-  \item{miRBaseBuild}{specify the string for the appropriate build
-    Information from mirbase.db to use for microRNAs.  This can be
-    learned by calling \code{supportedMiRBaseBuildValues}.  By default,
-    this value will be set to \code{NA}, which will inactivate the
-    \code{microRNAs} accessor.}
+  \item{miRBaseBuild}{This argument is defunct.}
   \item{pkgname}{By default this value is NULL and does not need to be
     filled in (a package name will be generated for you).  But if you
     override this value, then the package and it's object will be
@@ -187,10 +181,6 @@ makePackageName(txdb)
     \code{makeTxDbPackageFromBiomart} follows a similar pattern and
     calls the \code{\link{makeTxDbFromBiomart}} and
     \code{\link{makeTxDbPackage}} functions.
-  \code{supportedMiRBaseBuildValues} is a convenience function that will
-  list all the possible values for the miRBaseBuild argument.
-  \code{makePackageName} creates a package name from a TxDb object.
-  This function is also used by OrganismDbi.
 }
 
 \value{A \link[GenomicFeatures]{TxDb} object.}
@@ -210,9 +200,6 @@ makePackageName(txdb)
 ## First consider relevant helper/discovery functions:
 ## Get the list of tables known to work with makeTxDbPackageFromUCSC():
 supportedUCSCtables(genome="hg19")
-
-## Can also list all the possible values for the miRBaseBuild argument:
-supportedMiRBaseBuildValues()
 
 ## Next are examples of actually building a package:
 \donttest{

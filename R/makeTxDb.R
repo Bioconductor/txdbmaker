@@ -749,8 +749,5 @@ makeToyTxDb <- function(splicings, genes=NULL)
 
 
 ## helper to list mirbase.db miRBaseBuild values for species
-supportedMiRBaseBuildValues <- function(){
-    loadNamespace("mirbase.db")
-    res <- toTable(mirbase.db::mirbaseSPECIES)[,c("name","genome_assembly")]
-    S4Vectors:::extract_data_frame_rows(res, res$genome_assembly != "")
-}
+supportedMiRBaseBuildValues <- function() .Defunct()
+

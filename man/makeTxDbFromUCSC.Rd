@@ -85,11 +85,7 @@ browseUCSCtrack(genome="hg19", tablename="knownGene",
     to supply your own valid taxId here.
   }
   \item{miRBaseBuild}{
-    Specify the string for the appropriate build information from
-    \pkg{mirbase.db} to use for microRNAs.  This can be learned by
-    calling \code{supportedMiRBaseBuildValues}. By default, this value
-    will be set to \code{NA}, which will inactivate the \code{microRNAs}
-    accessor.
+    This argument is defunct.
   }
 }
 \details{
@@ -127,10 +123,6 @@ browseUCSCtrack(genome="hg19", tablename="knownGene",
 
     \item \code{\link[UCSC.utils]{list_UCSC_genomes}} in the \pkg{UCSC.utils}
           package to get the list of UCSC genomes.
-
-    \item The \code{\link{supportedMiRBaseBuildValues}} function for
-          listing all the possible values for the \code{miRBaseBuild}
-          argument.
 
     \item \link[GenomicFeatures]{TxDb} objects implemented in the
           \pkg{GenomicFeatures} package.

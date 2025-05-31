@@ -64,10 +64,7 @@ makeTxDbFromGFF(file,
     Alternatively, can be a \link[GenomeInfoDb]{Seqinfo} object.
   }
   \item{miRBaseBuild}{
-    Specify the string for the appropriate build Information from mirbase.db
-    to use for microRNAs. This can be learned by calling
-    \code{supportedMiRBaseBuildValues}. By default, this value will be set to
-    \code{NA}, which will inactivate the \code{microRNAs} accessor.
+    This argument is defunct.
   }
   \item{metadata}{
     A 2-column data frame containing meta information to be included in the
@@ -105,10 +102,6 @@ makeTxDbFromGFF(file,
     \item \code{\link{makeTxDbFromUCSC}}, \code{\link{makeTxDbFromBiomart}},
           and \code{\link{makeTxDbFromEnsembl}}, for making a
           \link[GenomicFeatures]{TxDb} object from online resources.
-
-    \item The \code{\link{supportedMiRBaseBuildValues}} function for
-          listing all the possible values for the \code{miRBaseBuild}
-          argument.
 
     \item \link[GenomicFeatures]{TxDb} objects implemented in the
           \pkg{GenomicFeatures} package.

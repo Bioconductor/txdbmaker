@@ -67,8 +67,8 @@
         stop("'dataSource' must be a single string or NA")
     if (!isSingleStringOrNA(organism))
         stop("'organism' must be a single string or NA")
-    if (!isSingleStringOrNA(miRBaseBuild))
-        stop("'miRBaseBuild' must be a single string or NA")
+    if (!identical(miRBaseBuild, NA))
+        stop("argument 'miRBaseBuild' is defunct")
     if (identical(dataSource, NA)) {
         if (is.character(file)) {
             dataSource <- file
@@ -85,8 +85,8 @@
         taxonomyId <- GenomeInfoDb:::lookup_tax_id_by_organism(organism)
     }
     df <- data.frame(
-        name=c("Data source", "Organism", "Taxonomy ID", "miRBase build ID"),
-        value=c(dataSource, organism, taxonomyId, miRBaseBuild))
+        name=c("Data source", "Organism", "Taxonomy ID"),
+        value=c(dataSource, organism, taxonomyId))
     metadata <- rbind(df, metadata)
     message("OK")
     metadata

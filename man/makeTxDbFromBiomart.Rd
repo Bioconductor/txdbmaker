@@ -65,11 +65,7 @@ getChromInfoFromBiomart(biomart="ENSEMBL_MART_ENSEMBL",
     you can use this argument to override that and supply your own
     taxId here (which will be independently checked to make sure its a
     real taxonomy id).  Normally you should never need to use this.}
-  \item{miRBaseBuild}{specify the string for the appropriate build
-    Information from mirbase.db to use for microRNAs.  This can be
-    learned by calling \code{supportedMiRBaseBuildValues}.  By default,
-    this value will be set to \code{NA}, which will inactivate the
-    \code{microRNAs} accessor.}
+  \item{miRBaseBuild}{This argument is defunct.}
 }
 
 \details{
@@ -146,10 +142,6 @@ getChromInfoFromBiomart(biomart="ENSEMBL_MART_ENSEMBL",
           \code{\link[biomaRt]{listDatasets}}, and
           \code{\link[biomaRt]{listFilters}} functions in the
           \pkg{biomaRt} package.
-
-    \item The \code{\link{supportedMiRBaseBuildValues}} function for
-          listing all the possible values for the \code{miRBaseBuild}
-          argument.
 
     \item \link[GenomicFeatures]{TxDb} objects implemented in the
           \pkg{GenomicFeatures} package.

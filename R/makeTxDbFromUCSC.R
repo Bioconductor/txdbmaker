@@ -609,8 +609,8 @@ browseUCSCtrack <- function(genome="hg19",
                                    taxonomyId=NA, miRBaseBuild=NA)
 {
     message("Prepare the 'metadata' data frame ... ", appendLF=FALSE)
-    if (!isSingleStringOrNA(miRBaseBuild))
-        stop(wmsg("'miRBaseBuild' must be a a single string or NA"))
+    if (!identical(miRBaseBuild, NA))
+        stop(wmsg("argument 'miRBaseBuild' is defunct"))
     organism <- get_organism_for_UCSC_genome(genome)
     if (is.na(taxonomyId)) {
         taxonomyId <- GenomeInfoDb:::lookup_tax_id_by_organism(organism)
@@ -622,13 +622,11 @@ browseUCSCtrack <- function(genome="hg19",
         name=c("Data source", "Genome", "Organism", "Taxonomy ID",
                "UCSC Table", "UCSC Track",
                "Resource URL", "Type of Gene ID",
-               "Full dataset",
-               "miRBase build ID"),
+               "Full dataset"),
         value=c("UCSC", genome, organism, taxonomyId,
                 tablename, track,
                 "https://genome.ucsc.edu/", gene_id_type,
-                ifelse(full_dataset, "yes", "no"),
-                miRBaseBuild),
+                ifelse(full_dataset, "yes", "no")),
         stringsAsFactors=FALSE
     )
     message("OK")

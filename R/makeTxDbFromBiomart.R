@@ -742,8 +742,8 @@ getChromInfoFromBiomart <- function(biomart="ENSEMBL_MART_ENSEMBL",
         GenomeInfoDb:::check_tax_id(taxonomyId)
     }
 
-    if (!isSingleStringOrNA(miRBaseBuild))
-        stop(wmsg("'miRBaseBuild' must be a a single string or NA"))
+    if (!identical(miRBaseBuild, NA))
+        stop(wmsg("argument 'miRBaseBuild' is defunct"))
     message("OK")
     data.frame(
         name=c("Data source",
@@ -755,8 +755,7 @@ getChromInfoFromBiomart <- function(biomart="ENSEMBL_MART_ENSEMBL",
                "BioMart dataset",
                "BioMart dataset description",
                "BioMart dataset version",
-               "Full dataset",
-               "miRBase build ID"),
+               "Full dataset"),
         value=c("BioMart",
                 organism,
                 taxonomyId,
@@ -766,8 +765,7 @@ getChromInfoFromBiomart <- function(biomart="ENSEMBL_MART_ENSEMBL",
                 dataset,
                 description,
                 dataset_version,
-                ifelse(is_full_dataset, "yes", "no"),
-                miRBaseBuild)
+                ifelse(is_full_dataset, "yes", "no"))
     )
 }
 
