@@ -51,8 +51,8 @@ browseUCSCtrack(genome="hg19", tablename="knownGene",
     \link[SummarizedExperiment]{SummarizedExperiment} objects,
     and many other objects in Bioconductor, the \link[GenomicFeatures]{TxDb}
     object returned by \code{makeTxDbFromUCSC} contains a
-    \link[GenomeInfoDb]{seqinfo} component that can be
-    accessed with \code{\link[GenomeInfoDb]{seqinfo}()}.
+    \link[Seqinfo]{seqinfo} component that can be
+    accessed with \code{\link[Seqinfo]{seqinfo}()}.
     This component contains various sequence-level information
     like the sequence names, lengths, and circularity flag for the
     genome assembly of the \link[GenomicFeatures]{TxDb} object.

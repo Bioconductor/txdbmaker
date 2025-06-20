@@ -61,7 +61,7 @@ makeTxDbFromGFF(file,
     Data frame containing information about the chromosomes. Will be
     passed to the internal call to \code{\link{makeTxDb}}.
     See \code{?\link{makeTxDb}} for more information.
-    Alternatively, can be a \link[GenomeInfoDb]{Seqinfo} object.
+    Alternatively, can be a \link[Seqinfo]{Seqinfo} object.
   }
   \item{miRBaseBuild}{
     This argument is defunct.
