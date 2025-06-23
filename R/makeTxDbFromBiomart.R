@@ -813,7 +813,7 @@ makeTxDbFromBiomart <- function(biomart="ENSEMBL_MART_ENSEMBL",
                                        extra_seqnames=transcripts$tx_chrom,
                                        circ_seqs=circ_seqs,
                                        host)
-    if (!is_full_dataset) {
+    if (!(is.null(chrominfo) || is_full_dataset)) {
         keep_idx <- which(chrominfo[ , "chrom"] %in% transcripts$tx_chrom)
         chrominfo <- S4Vectors:::extract_data_frame_rows(chrominfo, keep_idx)
     }
