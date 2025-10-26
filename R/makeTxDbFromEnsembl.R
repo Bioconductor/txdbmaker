@@ -302,11 +302,8 @@ makeTxDbFromEnsembl <- function(organism="Homo sapiens",
                                 username="anonymous", password=NULL,
                                 port=0L, tx_attrib=NULL)
 {
-    if (!requireNamespace("RMariaDB", quietly=TRUE))
-        stop(wmsg("Couldn't load the RMariaDB package. ",
-                  "You need to install the RMariaDB package ",
-                  "in order to use makeTxDbFromEnsembl()."))
-
+    S4Vectors:::load_package_gracefully("RMariaDB", "in order to ",
+                                        "use makeTxDbFromEnsembl()")
     dbname <- .lookup_dbname(organism, release=release)
     dbconn <- dbConnect(RMariaDB::MariaDB(), dbname=dbname,
                         host=server, username=username, password=password,

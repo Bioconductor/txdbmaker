@@ -715,11 +715,8 @@ makeTxDbFromUCSC <- function(genome="hg19",
         taxonomyId=NA,
         miRBaseBuild=NA)
 {
-    if (!requireNamespace("RMariaDB", quietly=TRUE))
-        stop(wmsg("Couldn't load the RMariaDB package. ",
-                  "You need to install the RMariaDB package ",
-                  "in order to use makeTxDbFromUCSC()."))
-
+    S4Vectors:::load_package_gracefully("RMariaDB", "in order to ",
+                                        "use makeTxDbFromUCSC()")
     if (!is.null(transcript_ids)) {
         if (!is.character(transcript_ids) || any(is.na(transcript_ids)))
             stop(wmsg("'transcript_ids' must be a ",
