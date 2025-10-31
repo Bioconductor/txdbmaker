@@ -4,7 +4,6 @@
 \alias{makeTxDbPackageFromUCSC}
 \alias{makeFDbPackageFromUCSC}
 \alias{makeTxDbPackageFromBiomart}
-\alias{supportedMiRBaseBuildValues}
 \alias{makePackageName}
 
 \title{
@@ -40,8 +39,7 @@ makeTxDbPackageFromUCSC(
     transcript_ids=NULL,
     circ_seqs=NULL,
     goldenPath.url=getOption("UCSC.goldenPath.url"),
-    taxonomyId=NA,
-    miRBaseBuild=NA)
+    taxonomyId=NA)
 
 makeFDbPackageFromUCSC(
     version,
@@ -73,9 +71,7 @@ makeTxDbPackageFromBiomart(
     filter=NULL,
     id_prefix="ensembl_",
     host="https://www.ensembl.org",
-    port,
-    taxonomyId=NA,
-    miRBaseBuild=NA)
+    taxonomyId=NA)
 
 makeTxDbPackage(txdb,
                 version,
@@ -132,7 +128,6 @@ makePackageName(txdb)
   \item{filter}{Additional filters to use in the BioMart query. Must be
     a named list. An example is \code{filter=as.list(c(source="entrez"))}}
   \item{host}{The host URL of the BioMart. Defaults to https://www.ensembl.org.}
-  \item{port}{This argument is defunct, don't use.}
   \item{id_prefix}{Specifies the prefix used in BioMart attributes. For
     example, some BioMarts may have an attribute specified as
     \code{"ensembl_transcript_id"} whereas others have the same attribute
@@ -161,7 +156,6 @@ makePackageName(txdb)
     provided (or inferred) will be used to look up the correct value for
     this.  But you can use this argument to override that and supply
     your own valid taxId here}
-  \item{miRBaseBuild}{This argument is defunct.}
   \item{pkgname}{By default this value is NULL and does not need to be
     filled in (a package name will be generated for you).  But if you
     override this value, then the package and it's object will be

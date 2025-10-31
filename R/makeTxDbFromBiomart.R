@@ -284,11 +284,8 @@
 getChromInfoFromBiomart <- function(biomart="ENSEMBL_MART_ENSEMBL",
                                     dataset="hsapiens_gene_ensembl",
                                     id_prefix="ensembl_",
-                                    host="https://www.ensembl.org",
-                                    port)
+                                    host="https://www.ensembl.org")
 {
-    if (!missing(port))
-        .Defunct(msg="The 'port' argument is defunct.")
     mart <- .useMart2(biomart=biomart, dataset=dataset, host=host)
     id_prefix <- .normarg_id_prefix(id_prefix)
     recognized_attribs <- recognizedBiomartAttribs(id_prefix)
@@ -711,8 +708,7 @@ getChromInfoFromBiomart <- function(biomart="ENSEMBL_MART_ENSEMBL",
 ### Prepare the 'metadata' data frame.
 ###
 
-.prepareBiomartMetadata <- function(mart, is_full_dataset, host,
-                                    taxonomyId, miRBaseBuild)
+.prepareBiomartMetadata <- function(mart, is_full_dataset, host, taxonomyId)
 {
     message("Prepare the 'metadata' data frame ... ",
             appendLF=FALSE)
@@ -742,8 +738,6 @@ getChromInfoFromBiomart <- function(biomart="ENSEMBL_MART_ENSEMBL",
         GenomeInfoDb:::check_tax_id(taxonomyId)
     }
 
-    if (!identical(miRBaseBuild, NA))
-        stop(wmsg("argument 'miRBaseBuild' is defunct"))
     message("OK")
     data.frame(
         name=c("Data source",
@@ -781,12 +775,8 @@ makeTxDbFromBiomart <- function(biomart="ENSEMBL_MART_ENSEMBL",
                                 filter=NULL,
                                 id_prefix="ensembl_",
                                 host="https://www.ensembl.org",
-                                port,
-                                taxonomyId=NA,
-                                miRBaseBuild=NA)
+                                taxonomyId=NA)
 {
-    if (!missing(port))
-        .Defunct(msg="The 'port' argument is defunct.")
     mart <- .useMart2(biomart=biomart, dataset=dataset, host=host)
     id_prefix <- .normarg_id_prefix(id_prefix)
     filter <- .add_tx_id_filter(filter, transcript_ids, id_prefix)
@@ -842,8 +832,7 @@ makeTxDbFromBiomart <- function(biomart="ENSEMBL_MART_ENSEMBL",
         
     genes <- .makeBiomartGenes(filter, mart, transcripts_tx_id,
                                recognized_attribs, id_prefix)
-    metadata <- .prepareBiomartMetadata(mart, is_full_dataset,
-                                        host, taxonomyId, miRBaseBuild)
+    metadata <- .prepareBiomartMetadata(mart, is_full_dataset, host, taxonomyId)
 
     message("Make the TxDb object ... ", appendLF=FALSE)
     txdb <- makeTxDb(transcripts, splicings,

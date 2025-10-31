@@ -60,15 +60,13 @@
 }
 
 .prepareGFFMetadata <- function(file, dataSource=NA, organism=NA,
-                                taxonomyId=NA, miRBaseBuild=NA, metadata)
+                                taxonomyId=NA, metadata)
 {
     message("Prepare the 'metadata' data frame ... ", appendLF=FALSE)
     if (!isSingleStringOrNA(dataSource))
         stop("'dataSource' must be a single string or NA")
     if (!isSingleStringOrNA(organism))
         stop("'organism' must be a single string or NA")
-    if (!identical(miRBaseBuild, NA))
-        stop("argument 'miRBaseBuild' is defunct")
     if (identical(dataSource, NA)) {
         if (is.character(file)) {
             dataSource <- file
@@ -127,7 +125,6 @@ makeTxDbFromGFF <- function(file,
                             taxonomyId=NA,
                             circ_seqs=NULL,
                             chrominfo=NULL,
-                            miRBaseBuild=NA,
                             metadata=NULL,
                             dbxrefTag)
 {
@@ -162,7 +159,7 @@ makeTxDbFromGFF <- function(file,
     message("OK")
 
     metadata <- .prepareGFFMetadata(file, dataSource, organism, taxonomyId,
-                                    miRBaseBuild, metadata)
+                                    metadata)
 
     message("Make the TxDb object ... ", appendLF=FALSE)
     txdb <- makeTxDbFromGRanges(gr, metadata=metadata)

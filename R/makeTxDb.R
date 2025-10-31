@@ -747,7 +747,3 @@ makeToyTxDb <- function(splicings, genes=NULL)
     stop("not ready yet, sorry!")
 }
 
-
-## helper to list mirbase.db miRBaseBuild values for species
-supportedMiRBaseBuildValues <- function() .Defunct()
-

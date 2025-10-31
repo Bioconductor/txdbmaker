@@ -21,8 +21,7 @@ makeTxDbFromUCSC(genome="hg19", tablename="knownGene",
         transcript_ids=NULL,
         circ_seqs=NULL,
         goldenPath.url=getOption("UCSC.goldenPath.url"),
-        taxonomyId=NA,
-        miRBaseBuild=NA)
+        taxonomyId=NA)
 
 supportedUCSCtables(genome="hg19")
 
@@ -83,9 +82,6 @@ browseUCSCtrack(genome="hg19", tablename="knownGene",
     By default this value is NA and the organism inferred will be used
     to look up the correct value for this. But you can use this argument
     to supply your own valid taxId here.
-  }
-  \item{miRBaseBuild}{
-    This argument is defunct.
   }
 }
 \details{

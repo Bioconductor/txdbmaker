@@ -19,7 +19,6 @@ makeTxDbFromGFF(file,
                 taxonomyId=NA,
                 circ_seqs=NULL,
                 chrominfo=NULL,
-                miRBaseBuild=NA,
                 metadata=NULL,
                 dbxrefTag)
 }
@@ -62,9 +61,6 @@ makeTxDbFromGFF(file,
     passed to the internal call to \code{\link{makeTxDb}}.
     See \code{?\link{makeTxDb}} for more information.
     Alternatively, can be a \link[Seqinfo]{Seqinfo} object.
-  }
-  \item{miRBaseBuild}{
-    This argument is defunct.
   }
   \item{metadata}{
     A 2-column data frame containing meta information to be included in the

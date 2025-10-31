@@ -605,12 +605,9 @@ browseUCSCtrack <- function(genome="hg19",
 ###
 
 .prepare_UCSC_metadata <- function(genome, tablename, track, gene_id_type,
-                                   full_dataset,
-                                   taxonomyId=NA, miRBaseBuild=NA)
+                                   full_dataset, taxonomyId=NA)
 {
     message("Prepare the 'metadata' data frame ... ", appendLF=FALSE)
-    if (!identical(miRBaseBuild, NA))
-        stop(wmsg("argument 'miRBaseBuild' is defunct"))
     organism <- get_organism_for_UCSC_genome(genome)
     if (is.na(taxonomyId)) {
         taxonomyId <- GenomeInfoDb:::lookup_tax_id_by_organism(organism)
@@ -643,8 +640,7 @@ browseUCSCtrack <- function(genome="hg19",
         full_dataset,
         circ_seqs=NULL,
         goldenPath.url=getOption("UCSC.goldenPath.url"),
-        taxonomyId=NA,
-        miRBaseBuild=NA)
+        taxonomyId=NA)
 {
     strand_is_dot <- ucsc_txtable$strand == "."
     if (any(strand_is_dot)) {
@@ -662,8 +658,7 @@ browseUCSCtrack <- function(genome="hg19",
     genes <- .make_UCSC_genes(genes, ucsc_txtable)
     chrominfo <- .make_UCSC_chrominfo(genome, circ_seqs, goldenPath.url)
     metadata <- .prepare_UCSC_metadata(genome, tablename, track, gene_id_type,
-                                       full_dataset,
-                                       taxonomyId,  miRBaseBuild)
+                                       full_dataset, taxonomyId)
     ## Jan 2019 -- The refGene tables in the hg19 and hg38 UCSC databases were
     ## last updated in Nov 2018 and now contain transcripts located on
     ## sequences that don't belong to the underlying genomes (GRCh37 and GRCh38
@@ -712,8 +707,7 @@ makeTxDbFromUCSC <- function(genome="hg19",
         transcript_ids=NULL,
         circ_seqs=NULL,
         goldenPath.url=getOption("UCSC.goldenPath.url"),
-        taxonomyId=NA,
-        miRBaseBuild=NA)
+        taxonomyId=NA)
 {
     S4Vectors:::load_package_gracefully("RMariaDB", "in order to ",
                                         "use makeTxDbFromUCSC()")
@@ -751,7 +745,6 @@ makeTxDbFromUCSC <- function(genome="hg19",
                                  full_dataset=is.null(transcript_ids),
                                  circ_seqs=circ_seqs,
                                  goldenPath.url=goldenPath.url,
-                                 taxonomyId=taxonomyId,
-                                 miRBaseBuild=miRBaseBuild)
+                                 taxonomyId=taxonomyId)
 }
 

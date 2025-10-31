@@ -242,8 +242,7 @@ makeTxDbPackageFromUCSC <- function(
   transcript_ids=NULL,    ## optional
   circ_seqs=NULL,
   goldenPath.url=getOption("UCSC.goldenPath.url"),
-  taxonomyId=NA,
-  miRBaseBuild=NA){
+  taxonomyId=NA){
     ## checks
     if(missing(version) || !isSingleString(version)){
         stop("'version' must be supplied as a single element",
@@ -275,8 +274,6 @@ makeTxDbPackageFromUCSC <- function(
     if(!isSingleString(goldenPath.url)){
         stop("'goldenPath.url' must be supplied as a single element",
              " character vector.")}
-    if(!identical(miRBaseBuild, NA))
-        stop("argument 'miRBaseBuild' is defunct")
 
     ## Make the DB
     txdb <- makeTxDbFromUCSC(genome=genome,
@@ -284,8 +281,7 @@ makeTxDbPackageFromUCSC <- function(
                              transcript_ids=transcript_ids,
                              circ_seqs=circ_seqs,
                              goldenPath.url=goldenPath.url,
-                             taxonomyId=taxonomyId,
-                             miRBaseBuild=miRBaseBuild)
+                             taxonomyId=taxonomyId)
     ## Make the Package
     makeTxDbPackage(txdb,
                     version=version,
@@ -309,9 +305,7 @@ makeTxDbPackageFromBiomart <- function(
   filter=NULL,
   id_prefix="ensembl_",
   host="https://www.ensembl.org",
-  port,
-  taxonomyId=NA,
-  miRBaseBuild=NA){
+  taxonomyId=NA){
     ## checks
     if(missing(version) || !isSingleString(version)){
         stop("'version' must be supplied as a single element",
@@ -336,10 +330,6 @@ makeTxDbPackageFromBiomart <- function(
              " character vector.")}
     if(!is.character(circ_seqs) || length(circ_seqs)<1){
         stop("'circ_seqs' must be supplied as a named character vector.")}
-    if(!identical(miRBaseBuild, NA))
-        stop("argument 'miRBaseBuild' is defunct")
-    if (!missing(port))
-        .Defunct(msg="The 'port' argument is defunct.")
     ## Make the DB
     txdb <- makeTxDbFromBiomart(biomart=biomart,
                                 dataset=dataset,
@@ -348,8 +338,7 @@ makeTxDbPackageFromBiomart <- function(
                                 filter=filter,
                                 id_prefix=id_prefix,
                                 host=host,
-                                taxonomyId=taxonomyId,
-                                miRBaseBuild=miRBaseBuild)
+                                taxonomyId=taxonomyId)
     ## Make the Package
     makeTxDbPackage(txdb,
                     version=version,

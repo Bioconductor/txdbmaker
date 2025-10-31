@@ -64,7 +64,6 @@ export(
   makeTxDbPackage,
   makeTxDbPackageFromUCSC,
   makeTxDbPackageFromBiomart,
-  makeFDbPackageFromUCSC,
-  supportedMiRBaseBuildValues
+  makeFDbPackageFromUCSC
 )
 
