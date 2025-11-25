@@ -265,19 +265,28 @@
 }
 
 .gather_Ensembl_metadata <- function(organism, dbname, server,
-                                     tx_attrib=NULL)
+                                     tx_attrib=NULL, taxonomyId)
 {
     message("Gather the metadata ... ", appendLF=FALSE)
     release <- .dbname2release(dbname)
     full_dataset <- is.null(tx_attrib)
+
+    if(is.na(taxonomyId)){
+        taxonomyId <- GenomeInfoDb:::lookup_tax_id_by_organism(organism)
+    } else {
+        GenomeInfoDb:::check_tax_id(taxonomyId)
+    }
+
     metadata <- data.frame(name=c("Data source",
                                   "Organism",
+                                  "Taxonomy ID",
                                   "Ensembl release",
                                   "Ensembl database",
                                   "MySQL server",
                                   "Full dataset"),
                            value=c("Ensembl",
                                    organism,
+                                   taxonomyId,
                                    release,
                                    dbname,
                                    server,
@@ -300,7 +309,7 @@ makeTxDbFromEnsembl <- function(organism="Homo sapiens",
                                 circ_seqs=NULL,
                                 server="ensembldb.ensembl.org",
                                 username="anonymous", password=NULL,
-                                port=0L, tx_attrib=NULL)
+                                port=0L, tx_attrib=NULL, taxonomyId=NA)
 {
     S4Vectors:::load_package_gracefully("RMariaDB", "in order to ",
                                         "use makeTxDbFromEnsembl()")
@@ -339,7 +348,7 @@ makeTxDbFromEnsembl <- function(organism="Homo sapiens",
 
     chrominfo$seq_region_id <- NULL
 
-    metadata <- .gather_Ensembl_metadata(organism, dbname, server, tx_attrib)
+    metadata <- .gather_Ensembl_metadata(organism, dbname, server, tx_attrib, taxonomyId)
 
     message("Make the TxDb object ... ", appendLF=FALSE)
     txdb <- makeTxDb(transcripts, splicings,
