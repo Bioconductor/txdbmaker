@@ -11,7 +11,7 @@ biocViews: Infrastructure, DataImport, Annotation, GenomeAnnotation,
 	GenomeAssembly, Genetics, Sequencing
 URL: https://bioconductor.org/packages/txdbmaker
 BugReports: https://github.com/Bioconductor/txdbmaker/issues
-Version: 1.7.1
+Version: 1.7.2
 License: Artistic-2.0
 Encoding: UTF-8
 Authors@R: c(
@@ -23,6 +23,7 @@ Authors@R: c(
 	person("M.", "Morgan", role="aut"),
 	person("R.", "Castelo", role="ctb"),
 	person("M.", "Lawrence", role="ctb"),
+	person("I-Hsuan", "Lin", role="ctb"),
 	person("J.", "MacDonald", role="ctb"),
 	person("M.", "Ramos", role="ctb"),
 	person("S.", "Saini", role="ctb"),

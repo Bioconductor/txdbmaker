@@ -271,7 +271,7 @@
     release <- .dbname2release(dbname)
     full_dataset <- is.null(tx_attrib)
 
-    if(is.na(taxonomyId)){
+    if (is.na(taxonomyId)) {
         taxonomyId <- GenomeInfoDb:::lookup_tax_id_by_organism(organism)
     } else {
         GenomeInfoDb:::check_tax_id(taxonomyId)
@@ -348,7 +348,8 @@ makeTxDbFromEnsembl <- function(organism="Homo sapiens",
 
     chrominfo$seq_region_id <- NULL
 
-    metadata <- .gather_Ensembl_metadata(organism, dbname, server, tx_attrib, taxonomyId)
+    metadata <- .gather_Ensembl_metadata(organism, dbname, server,
+                                         tx_attrib, taxonomyId)
 
     message("Make the TxDb object ... ", appendLF=FALSE)
     txdb <- makeTxDb(transcripts, splicings,
