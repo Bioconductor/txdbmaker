@@ -22,7 +22,7 @@ makeTxDbFromEnsembl(organism="Homo sapiens",
                     circ_seqs=NULL,
                     server="ensembldb.ensembl.org",
                     username="anonymous", password=NULL, port=0L,
-                    tx_attrib=NULL)
+                    tx_attrib=NULL, taxonomyId=NA)
 }
 
 \arguments{
@@ -58,6 +58,12 @@ makeTxDbFromEnsembl(organism="Homo sapiens",
   \item{tx_attrib}{
     If not \code{NULL}, only select transcripts with an attribute of
     the given code, a string, like \code{"gencode_basic"}.
+  }
+  \item{taxonomyId}{By default this value is NA and the dataset
+    selected will be used to look up the correct value for this.  But
+    you can use this argument to override that and supply your own
+    taxId here (which will be independently checked to make sure its a
+    real taxonomy id).  Normally you should never need to use this.
   }
 }
 
