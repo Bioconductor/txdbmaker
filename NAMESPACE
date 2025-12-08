@@ -25,9 +25,7 @@ importFrom(Biobase, createPackage)
 importClassesFrom(BiocIO, BiocFile, CompressedFile)
 importFrom(BiocIO, import, FileForFormat)
 
-## rtracklayer only used in R/makeFeatureDbFromUCSC.R
-importFrom(rtracklayer, browserSession, trackNames, ucscTables,
-                        ucscTableQuery, getTable, ucscSchema)
+importFrom(rtracklayer, import.gff)
 importFrom(biomaRt, getBM, listAttributes, listDatasets, listFilters,
                     listMarts, useDataset, useEnsembl, useEnsemblGenomes)
 

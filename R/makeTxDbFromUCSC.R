@@ -320,7 +320,8 @@ browseUCSCtrack <- function(genome="hg19",
     if (is.character(mapdef))
         columns <- c(columns, mapdef[["colname"]])
     message("Download the ", tablename, " table ... ", appendLF=FALSE)
-    ans <- UCSC_dbselect(genome, tablename, columns=columns, where=where)
+    ans <- UCSC_dbselect(genome, tablename, columns=columns, where=where,
+                         try.blob.as.list=TRUE)
     message("OK")
     if (!is.list(ans[ , "exonStarts"]))
         ans[ , "exonStarts"] <- toListOfIntegerVectors(ans[ , "exonStarts"])

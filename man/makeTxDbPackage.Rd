@@ -111,9 +111,10 @@ makePackageName(txdb)
   \item{genome}{name of a UCSC genome assembly e.g. \code{"hg19"} or
     \code{"panTro6"}. Get the list of UCSC genomes currently available
     with \code{\link[UCSC.utils]{list_UCSC_genomes}()[ , "genome"]}.}
-  \item{track}{name of the UCSC track.  Use
-    \code{supportedUCSCFeatureDbTracks} to get the list of available
-        tracks for a particular genome}
+  \item{track}{name of the UCSC track. Use
+    \code{\link[UCSC.utils]{list_UCSC_tracks}} from the \pkg{UCSC.utils}
+    package to get the list of available tracks and associated primary
+    tables for a particular genome.}
   \item{tablename}{name of the UCSC table containing the transcript
     annotations to retrieve. Use the \code{\link{supportedUCSCtables}}
     utility function to get the list of tables known to work with

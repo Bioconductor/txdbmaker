@@ -123,75 +123,36 @@
     insert_data_into_table(conn, tableName, data)
 }
 
-
-## helper function to ID tables that rtracklayer won't process.
-checkTable <- function(query){
-  query@table %in% rtracklayer::tableNames(query)
-}
-
-## helper to check a track
-isGoodTrack <- function(track, session){
-  query <- ucscTableQuery(session)
-  tracks <- trackNames(query)
-  track %in% names(tracks)
-}
-
-## helper to detect and generate a list of "legitimate" tracks
-makeWhiteList <- function(session, trx){
-  vapply(trx, function(x) isGoodTrack(x, session), logical(1))
-}
-
-## Discovery for supported Tracks
+## Discovery for supported tracks and associated primary tables.
 supportedUCSCFeatureDbTracks <- function(genome)
 {
-  session <- browserSession()
-  genome(session) <- genome
-  query <- ucscTableQuery(session)
-  trx <- trackNames(ucscTableQuery(session))
-  supported <- makeWhiteList(session, trx)
-  trx[supported]
+  msg <- c("supportedUCSCFeatureDbTracks() is deprecated. Please use ",
+           "list_UCSC_tracks() from the UCSC.utils package instead.")
+  .Deprecated(msg=wmsg(msg))
+  list_UCSC_tracks(genome)
 }
 
 ## Discover table names available in Tracks
 supportedUCSCFeatureDbTables <- function(genome, track)
 {
-  tables <- ucscTables(genome, track)
-  if(length(tables)){
-    tables
-  }else{
-    stop(wmsg("The track provided does not contain tables ",
-              "that are available in tabular form."))
-  }
+  msg <- c("supportedUCSCFeatureDbTables() is deprecated. Please use ",
+           "list_UCSC_tracks() from the UCSC.utils package instead.")
+  .Deprecated(msg=wmsg(msg))
+  list_UCSC_tracks(genome)
 }
 
-## Discover the schema information (field names and potentially someday the
-## type information) for a track and table combo.
+## Return the schema information (field names and types) for a given
+## table.
 UCSCFeatureDbTableSchema <- function(genome,
                                      track,
                                      tablename)
 {
-  session <- browserSession()
-  genome(session) <- genome
-  ## Check that the track is available for this genome
-  if(!isGoodTrack(track, session))
-    stop("track \"", track, "\" is not supported")
-  ## Check that the tablename is available for this genome
-  tbls <- supportedUCSCFeatureDbTables(genome, track)
-  tbl <- tbls[tbls %in% tablename]
-  if (length(tbl)==0)
-    stop("table \"", tablename, "\" is not supported")
-
-  ## then make a query
-  query <- ucscTableQuery(session, table=tablename)
-  res <- ucscSchema(query)
-  ## now for the tricky part: converting from MYSQL to R...  There is no good
-  ## way to extract the "R" type information from the data.frame since it
-  ## appears that they are all treated as "character" information.
-  sqlTypes <- res$SQL.type
-  Rtypes <- map_SQLtypes_to_Rtypes(sqlTypes)
-  names <- res$field
-  names(Rtypes) <- names
-  Rtypes
+  if (!missing(track))
+      .Deprecated(msg="the 'track' argument in deprecated")
+  df <- UCSC_dbselect(genome, tablename, MoreSQL="LIMIT 0")
+  col2Rtype <- vapply(df, function(col) class(col)[[1L]], character(1))
+  col2Rtype[col2Rtype == "blob"] <- "character"
+  col2Rtype
 }
 
 ## Convert SQL types to R types by creating a
@@ -240,14 +201,18 @@ makeFeatureDbFromUCSC <- function(genome,
 {
     if (!isSingleString(genome))
         stop("'genome' must be a single string")
-    if (!isSingleString(track))
-        stop("'track' must be a single string")
+    if (!missing(track))
+        .Deprecated(msg="the 'track' argument in deprecated")
     if (!isSingleString(tablename))
         stop("'tablename' must be a single string")
+    if (!missing(url))
+        .Deprecated(msg="the 'url' argument in deprecated")
+    if (!missing(goldenPath.url))
+        .Deprecated(msg="the 'goldenPath.url' argument in deprecated")
 
     ## Check the column names
-    if(length(names(columns)) != length(unique(names(columns))))
-      stop("The default field names are not unique for this table.")
+    if (anyDuplicated(names(columns)))
+        stop("The default field names are not unique for this table.")
     ## Once we know the columns names are unique, we remove the default ones.
     columns <- columns[!(names(columns) %in% names(.UCSC_GENERICCOL2CLASS))]
     ## also have to remove any columns that are to be re-assigned!
@@ -257,27 +222,9 @@ makeFeatureDbFromUCSC <- function(genome,
       columns <- columns[!(names(columns) %in% altCols )]
     }
 
-    ## Check other arguments
-    if (!isSingleString(url))
-        stop("'url' must be a single string")
-    if (!isSingleString(goldenPath.url))
-        stop("'goldenPath.url' must be a single string")
-
-    ## Create a UCSC Genome Browser session.
-    session <- browserSession(url=url)
-    genome(session) <- genome
-    track_tables <- ucscTables(genome, track)
-    if (!(tablename %in% track_tables))
-        stop(wmsg("txdbmaker internal error: ", tablename, " table doesn't ",
-                  "exist or is not associated with ", track, " track. ",
-                  "Please report the issue at ",
-                  "https://github.com/Bioconductor/txdbmaker/issues, ",
-                  "and sorry for the inconvenience."))
-
     ## Download the data table.
     message("Download the ", tablename, " table ... ", appendLF=FALSE)
-    query <- ucscTableQuery(session, table=tablename)
-    ucsc_table <- getTable(query)
+    ucsc_table <- UCSC_dbselect(genome, tablename)
 
     ## check that we have strand info, and if not, add some in
     ucsc_table <- .addMissingStrandCols(ucsc_table)

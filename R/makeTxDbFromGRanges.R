@@ -1553,8 +1553,8 @@ test_makeTxDbFromGRanges_on_Ensembl_organism_gtf <- function(organism)
     download.file(url, local_gtf_file)
 
     cat("Import ", local_gtf_file, " as GRanges object 'gr' ... ", sep="")
-    gr <- import(local_gtf_file, colnames=GTF_COLNAMES,
-                                 feature.type=GFF_FEATURE_TYPES)
+    gr <- import.gff(local_gtf_file, colnames=GTF_COLNAMES,
+                                     feature.type=GFF_FEATURE_TYPES)
     cat("\n")
 
     cat("txdb1 <- makeTxDbFromGRanges(gr) ... ", sep="")
@@ -1627,32 +1627,32 @@ source("txdbmaker/R/makeTxDbFromGRanges.R")
 GFF3_files <- system.file("extdata", "GFF3_files", package="txdbmaker")
 
 file1 <- file.path(GFF3_files, "TheCanonicalGene_v1.gff3")
-gr1 <- import(file1, format="gff3", colnames=GFF3_COLNAMES,
-                     feature.type=GFF_FEATURE_TYPES)
+gr1 <- import.gff(file1, format="gff3", colnames=GFF3_COLNAMES,
+                         feature.type=GFF_FEATURE_TYPES)
 txdb1 <- makeTxDbFromGRanges(gr1)
 txdb1
 
 file2 <- file.path(GFF3_files, "TheCanonicalGene_v2.gff3")
-gr2 <- import(file2, format="gff3", colnames=GFF3_COLNAMES,
-                     feature.type=GFF_FEATURE_TYPES)
+gr2 <- import.gff(file2, format="gff3", colnames=GFF3_COLNAMES,
+                         feature.type=GFF_FEATURE_TYPES)
 txdb2 <- makeTxDbFromGRanges(gr2)
 txdb2
 
 file3 <- file.path(GFF3_files, "a.gff3")
-gr3 <- import(file3, format="gff3", colnames=GFF3_COLNAMES,
-                     feature.type=GFF_FEATURE_TYPES)
+gr3 <- import.gff(file3, format="gff3", colnames=GFF3_COLNAMES,
+                         feature.type=GFF_FEATURE_TYPES)
 txdb3 <- makeTxDbFromGRanges(gr3)
 txdb3
 
 file4 <- file.path(GFF3_files, "dmel-1000-r5.11.filtered.gff")
-gr4 <- import(file4, format="gff3", colnames=GFF3_COLNAMES,
-                     feature.type=GFF_FEATURE_TYPES)
+gr4 <- import.gff(file4, format="gff3", colnames=GFF3_COLNAMES,
+                         feature.type=GFF_FEATURE_TYPES)
 txdb4 <- makeTxDbFromGRanges(gr4)
 txdb4  # exactly the same as with makeTxDbFromGFF()
 
 file5 <- file.path(GFF3_files, "GCF_000020065.1_ASM2006v1_genomic.gff")
-gr5 <- import(file5, format="gff3", colnames=GFF3_COLNAMES,
-                     feature.type=GFF_FEATURE_TYPES)
+gr5 <- import.gff(file5, format="gff3", colnames=GFF3_COLNAMES,
+                         feature.type=GFF_FEATURE_TYPES)
 txdb5 <- makeTxDbFromGRanges(gr5)
 txdb5
 
@@ -1661,8 +1661,8 @@ filename <- paste0(genome, "_genomic.gff.gz")
 url <- paste0("ftp://ftp.ncbi.nlm.nih.gov/genomes/all/", genome, "/", filename)
 file6 <- file.path(tempdir(), file6)
 download.file(url, file6)
-gr6 <- import(file6, format="gff3", colnames=GFF3_COLNAMES,
-                     feature.type=GFF_FEATURE_TYPES)
+gr6 <- import.gff(file6, format="gff3", colnames=GFF3_COLNAMES,
+                         feature.type=GFF_FEATURE_TYPES)
 
 ## Compared with makeTxDbFromGFF():
 ##
@@ -1681,14 +1681,14 @@ GTF_files <- system.file("extdata", "GTF_files", package="txdbmaker")
 ## test1.gtf grabbed from http://mblab.wustl.edu/GTF22.html (5 exon gene with
 ## 3 translated exons).
 file1 <- file.path(GTF_files, "test1.gtf")
-gr1 <- import(file1, format="gtf", colnames=GTF_COLNAMES,
-                     feature.type=GFF_FEATURE_TYPES)
+gr1 <- import.gff(file1, format="gtf", colnames=GTF_COLNAMES,
+                         feature.type=GFF_FEATURE_TYPES)
 txdb1 <- makeTxDbFromGRanges(gr1)
 txdb1
 
 file2 <- file.path(GTF_files, "GCA_002204515.1_AaegL5.0_genomic.gtf.gz")
-gr2 <- import(file2, format="gtf", colnames=GTF_COLNAMES,
-                     feature.type=GFF_FEATURE_TYPES)
+gr2 <- import.gff(file2, format="gtf", colnames=GTF_COLNAMES,
+                         feature.type=GFF_FEATURE_TYPES)
 txdb2 <- makeTxDbFromGRanges(gr2)
 txdb2
 }

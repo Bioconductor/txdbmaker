@@ -25,10 +25,6 @@
   go smoothly.
 }
 \usage{
-supportedUCSCFeatureDbTracks(genome)
-
-supportedUCSCFeatureDbTables(genome, track)
- 
 UCSCFeatureDbTableSchema(genome,
                          track,
                          tablename)
@@ -49,18 +45,17 @@ makeFeatureDbFromUCSC(
   \item{genome}{genome abbreviation used by UCSC and listed in
     \code{\link[UCSC.utils]{list_UCSC_genomes}()[ , "genome"]}.
         For example: \code{"hg18"}.}
-  \item{track}{name of the UCSC track.  Use
-    \code{supportedUCSCFeatureDbTracks} to get the list of available
-        tracks for a particular genome}
+  \item{track}{Deprecated.}
   \item{tablename}{name of the UCSC table containing the annotations to
-        retrieve. Use the \code{supportedUCSCFeatureDbTables} utility
-        function to get the list of supported tables for a track.}
+        retrieve. Use
+        \code{\link[UCSC.utils]{list_UCSC_tracks}} from the \pkg{UCSC.utils}
+        package to get the list of available tracks and associated primary
+        tables for a particular genome.}
   \item{columns}{a named character vector to list out the names and
         types of the other columns that the downloaded track should
         have.  Use \code{UCSCFeatureDbTableSchema} to retrieve this
         information for a particular table.}
-  \item{url,goldenPath.url}{use to specify the location of an
-        alternate UCSC Genome Browser.}
+  \item{url,goldenPath.url}{Deprecated.}
   \item{chromCol}{If the schema comes back and the 'chrom' column has been 
         labeled something other than 'chrom', use this argument to indicate 
         what that column has been labeled as so we can properly designate it.
@@ -80,14 +75,6 @@ makeFeatureDbFromUCSC(
   \code{makeFeatureDbFromUCSC} is a convenience function that builds a
         tiny database from one of the UCSC track tables.
 
-  \code{supportedUCSCFeatureDbTracks} is a convenience function that
-        returns potential track names that could be used to make
-        FeatureDb objects.
-
-  \code{supportedUCSCFeatureDbTables} is a convenience function that
-        returns potential table names for FeatureDb objects (table names
-        go with a track name).
-
   \code{UCSCFeatureDbTableSchema} is a convenience function that creates a
         named vector of types for all the fields that can potentially be
         supported for a given track.  By default, this will be called on
@@ -96,13 +83,13 @@ makeFeatureDbFromUCSC(
 
 \value{
   A \link[GenomicFeatures]{FeatureDb} object for \code{makeFeatureDbFromUCSC}.
-  Or in the case of \code{supportedUCSCFeatureDbTracks} and
-  \code{UCSCFeatureDbTableSchema} a named character vector}
+}
 
 \author{M. Carlson}
 
 \seealso{
-  \code{\link[UCSC.utils]{list_UCSC_genomes}} in the \pkg{UCSC.utils} package
+  \code{\link[UCSC.utils]{list_UCSC_genomes}} and
+  \code{\link[UCSC.utils]{list_UCSC_tracks}} in the \pkg{UCSC.utils} package.
 }
 
 \examples{
@@ -110,21 +97,18 @@ makeFeatureDbFromUCSC(
 library(UCSC.utils)
 list_UCSC_genomes()[ , "genome"]
 
-## Display the list of Tracks supported by makeFeatureDbFromUCSC():
-# supportedUCSCFeatureDbTracks("mm10")
+## Display the list of tracks available for your genome:
+list_UCSC_tracks("mm10")
 
-## Display the list of tables supported by your track:
-supportedUCSCFeatureDbTables(genome="mm10",
-                             track="qPCR Primers")
+## Lookup the primary table associated with your track of interest:
+subset(list_UCSC_tracks("mm10"), track == "qPCR Primers")
 
 ## Display fields that could be passed in to colnames:
 UCSCFeatureDbTableSchema(genome="mm10",
-                         track="qPCR Primers",
                          tablename="qPcrPrimers")
 
 ## Retrieving a full transcript dataset for Mouse from UCSC:
 fdb <- makeFeatureDbFromUCSC(genome="mm10",
-                              track="qPCR Primers",
-                              tablename="qPcrPrimers")
+                             tablename="qPcrPrimers")
 fdb
 }

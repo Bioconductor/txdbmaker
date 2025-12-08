@@ -149,8 +149,8 @@ makeTxDbFromGFF <- function(file,
 
     message("Import genomic features from the file as a GRanges object ... ",
             appendLF=FALSE)
-    gr <- import(file, format=format, colnames=colnames,
-                       feature.type=GFF_FEATURE_TYPES)
+    gr <- import.gff(file, format=format, colnames=colnames,
+                           feature.type=GFF_FEATURE_TYPES)
     gr <- .tidy_seqinfo(gr, circ_seqs, chrominfo)
     if (!missing(dbxrefTag)) {
         gr <- .rename_by_dbxrefTag(gr, dbxrefTag)
