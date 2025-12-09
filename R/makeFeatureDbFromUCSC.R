@@ -99,7 +99,6 @@
     dbWriteTable(conn, "metadata", metadata, row.names=FALSE)
 }
 
-
 ## The following writes the data contents of our generic table
 .writeGenericFeatureTable <- function(conn, data, tableName, columns)
 {
@@ -155,25 +154,6 @@ UCSCFeatureDbTableSchema <- function(genome,
   col2Rtype
 }
 
-## Convert SQL types to R types by creating a
-## dummy SQL table and reading it's type information
-map_SQLtypes_to_Rtypes <- function(SQLtypes)
-{
-    stopifnot(is.character(SQLtypes))
-    SQLtypes <- gsub(" *unsigned", "", SQLtypes)
-    SQLtypes <- gsub("^enum\\(.*\\)$", "TEXT", SQLtypes)
-    col_defs <- sprintf("col%d %s", seq_along(SQLtypes), SQLtypes)
-    sql <- sprintf("CREATE TABLE dummy (%s)", paste0(col_defs, collapse=", "))
-    conn <- dbConnect(SQLite())
-    on.exit(dbDisconnect(conn))
-    dbExecute(conn, sql)
-    dummy <- dbReadTable(conn, "dummy")
-    col_types <- vapply(dummy, function(col) class(col)[[1L]], character(1))
-    # edge case
-    col_types[col_types == "blob"] <- "character"
-    setNames(col_types, SQLtypes)
-}
-
 ## I will need a function to actually make the DB
 makeFeatureDb <- function(data, tableName, columns, metadata=NULL, ...)
 {
@@ -183,8 +163,6 @@ makeFeatureDb <- function(data, tableName, columns, metadata=NULL, ...)
     .writeMetadataFeatureTable(conn, metadata, tableName)  # must come last!
     GenomicFeatures:::FeatureDb(conn)
 }
-
-
 
 ## standard columns are chrom, chromStart, chromEnd and strand
 ## all others need to be specified
@@ -281,5 +259,4 @@ makeFeatureDbFromUCSC <- function(genome,
                   metadata=metadata,
                   columns)
 }
-
 
