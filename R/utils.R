@@ -116,6 +116,8 @@ makeZeroRowDataFrame <- function(col2class)
 ###   x <- setDataFrameColClass(x, c(colA="integer", colB="factor"))
 ### Note that if 'x' has more than one "colA" col, then *all* of them are
 ### coerced to integer.
+### NOTE: Only used by makeFeatureDbFromUCSC() so can go away when
+### makeFeatureDbFromUCSC() goes away.
 setDataFrameColClass <- function(x, col2class, drop.extra.cols=FALSE)
 {
     if (!is.data.frame(x))
@@ -144,8 +146,9 @@ setDataFrameColClass <- function(x, col2class, drop.extra.cols=FALSE)
                           return(FUN(col))
                       as(col, class)
                   })
-    names(tmp) <- colnames(x)[col_idx]
-    return(data.frame(tmp, check.names=FALSE, stringsAsFactors=FALSE))
+    structure(tmp, names=colnames(x)[col_idx],
+                   class="data.frame",
+                   row.names=seq_along(tmp[[1L]]))
 }
 
 ### Acts like an SQL *inner* join.

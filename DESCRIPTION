@@ -11,7 +11,7 @@ biocViews: Infrastructure, DataImport, Annotation, GenomeAnnotation,
 	GenomeAssembly, Genetics, Sequencing
 URL: https://bioconductor.org/packages/txdbmaker
 BugReports: https://github.com/Bioconductor/txdbmaker/issues
-Version: 1.6.1
+Version: 1.6.2
 License: Artistic-2.0
 Encoding: UTF-8
 Authors@R: c(
@@ -31,8 +31,8 @@ Authors@R: c(
 Depends: BiocGenerics, S4Vectors (>= 0.47.6), Seqinfo,
 	GenomicRanges (>= 1.61.1), GenomicFeatures (>= 1.61.4)
 Imports: methods, utils, stats, tools, httr, rjson, DBI, RSQLite (>= 2.0),
-	IRanges, UCSC.utils, GenomeInfoDb, AnnotationDbi, Biobase, BiocIO,
-	rtracklayer, biomaRt (>= 2.59.1)
+	IRanges, UCSC.utils (>= 1.6.1), GenomeInfoDb, AnnotationDbi, Biobase,
+	BiocIO, rtracklayer, biomaRt (>= 2.59.1)
 Suggests: RMariaDB, ensembldb, GenomeInfoDbData, RUnit, BiocStyle, knitr
 VignetteBuilder: knitr
 Collate: utils.R

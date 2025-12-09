@@ -123,12 +123,6 @@
     insert_data_into_table(conn, tableName, data)
 }
 
-
-## helper function to ID tables that rtracklayer won't process.
-checkTable <- function(query){
-  query@table %in% rtracklayer::tableNames(query)
-}
-
 ## helper to check a track
 isGoodTrack <- function(track, session){
   query <- ucscTableQuery(session)
@@ -170,47 +164,10 @@ UCSCFeatureDbTableSchema <- function(genome,
                                      track,
                                      tablename)
 {
-  session <- browserSession()
-  genome(session) <- genome
-  ## Check that the track is available for this genome
-  if(!isGoodTrack(track, session))
-    stop("track \"", track, "\" is not supported")
-  ## Check that the tablename is available for this genome
-  tbls <- supportedUCSCFeatureDbTables(genome, track)
-  tbl <- tbls[tbls %in% tablename]
-  if (length(tbl)==0)
-    stop("table \"", tablename, "\" is not supported")
-
-  ## then make a query
-  query <- ucscTableQuery(session, table=tablename)
-  res <- ucscSchema(query)
-  ## now for the tricky part: converting from MYSQL to R...  There is no good
-  ## way to extract the "R" type information from the data.frame since it
-  ## appears that they are all treated as "character" information.
-  sqlTypes <- res$SQL.type
-  Rtypes <- map_SQLtypes_to_Rtypes(sqlTypes)
-  names <- res$field
-  names(Rtypes) <- names
-  Rtypes
-}
-
-## Convert SQL types to R types by creating a
-## dummy SQL table and reading it's type information
-map_SQLtypes_to_Rtypes <- function(SQLtypes)
-{
-    stopifnot(is.character(SQLtypes))
-    SQLtypes <- gsub(" *unsigned", "", SQLtypes)
-    SQLtypes <- gsub("^enum\\(.*\\)$", "TEXT", SQLtypes)
-    col_defs <- sprintf("col%d %s", seq_along(SQLtypes), SQLtypes)
-    sql <- sprintf("CREATE TABLE dummy (%s)", paste0(col_defs, collapse=", "))
-    conn <- dbConnect(SQLite())
-    on.exit(dbDisconnect(conn))
-    dbExecute(conn, sql)
-    dummy <- dbReadTable(conn, "dummy")
-    col_types <- vapply(dummy, function(col) class(col)[[1L]], character(1))
-    # edge case
-    col_types[col_types == "blob"] <- "character"
-    setNames(col_types, SQLtypes)
+  df <- UCSC_dbselect(genome, tablename, MoreSQL="LIMIT 0")
+  col2Rtype <- vapply(df, function(col) class(col)[[1L]], character(1))
+  col2Rtype[col2Rtype == "blob"] <- "character"
+  col2Rtype
 }
 
 ## I will need a function to actually make the DB
@@ -246,8 +203,8 @@ makeFeatureDbFromUCSC <- function(genome,
         stop("'tablename' must be a single string")
 
     ## Check the column names
-    if(length(names(columns)) != length(unique(names(columns))))
-      stop("The default field names are not unique for this table.")
+    if (anyDuplicated(names(columns)))
+        stop("The default field names are not unique for this table.")
     ## Once we know the columns names are unique, we remove the default ones.
     columns <- columns[!(names(columns) %in% names(.UCSC_GENERICCOL2CLASS))]
     ## also have to remove any columns that are to be re-assigned!
@@ -263,21 +220,9 @@ makeFeatureDbFromUCSC <- function(genome,
     if (!isSingleString(goldenPath.url))
         stop("'goldenPath.url' must be a single string")
 
-    ## Create a UCSC Genome Browser session.
-    session <- browserSession(url=url)
-    genome(session) <- genome
-    track_tables <- ucscTables(genome, track)
-    if (!(tablename %in% track_tables))
-        stop(wmsg("txdbmaker internal error: ", tablename, " table doesn't ",
-                  "exist or is not associated with ", track, " track. ",
-                  "Please report the issue at ",
-                  "https://github.com/Bioconductor/txdbmaker/issues, ",
-                  "and sorry for the inconvenience."))
-
     ## Download the data table.
     message("Download the ", tablename, " table ... ", appendLF=FALSE)
-    query <- ucscTableQuery(session, table=tablename)
-    ucsc_table <- getTable(query)
+    ucsc_table <- UCSC_dbselect(genome, tablename)
 
     ## check that we have strand info, and if not, add some in
     ucsc_table <- .addMissingStrandCols(ucsc_table)
