@@ -1,3 +1,33 @@
+VERSION 1.8.0
+-------------
+
+NEW FEATURES
+
+    o Add Taxonomy ID to TxDb object returned by makeTxDbFromEnsembl().
+      Like for other makeTxDbFrom*() functions, the new 'taxonomyId'
+      argument of makeTxDbFromEnsembl() is set to NA by default.
+      So if the user doesn't supply a Taxonomy ID via the argument,
+      GenomeInfoDb:::lookup_tax_id_by_organism() is used to retrieve
+      the taxonomy ID for the supplied 'organism'. Otherwise
+      GenomeInfoDb:::check_tax_id() is used to check the user-supplied
+      taxonomy ID.
+      Contributed by I-Hsuan Lin.
+
+DEPRECATED AND DEFUNCT
+
+    o Deprecate functions supportedUCSCFeatureDbTracks() and
+      supportedUCSCFeatureDbTables(). Use list_UCSC_tracks() from package
+      UCSC.utils instead.
+
+    o Deprecate the 'track', 'url', and 'goldenPath.url' arguments
+      of functions makeFeatureDbFromUCSC() and UCSCFeatureDbTableSchema().
+
+    o Utility function supportedMiRBaseBuildValues(), argument 'miRBaseBuild',
+      and argument 'port' are now gone after being defunct in BioC 3.22.
+      Note that 'miRBaseBuild' and 'port' were arguments of several functions
+      in the txdbmaker package.
+
+
 VERSION 1.6.0
 -------------
 
