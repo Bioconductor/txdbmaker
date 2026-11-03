@@ -38,7 +38,7 @@ getChromInfoFromBiomart(biomart="ENSEMBL_MART_ENSEMBL",
     databases with compatible transcript annotations.}
   \item{dataset}{which dataset from BioMart. For example:
     \code{"hsapiens_gene_ensembl"}, \code{"mmusculus_gene_ensembl"},
-    \code{"dmelanogaster_gene_ensembl"}, \code{"celegans_gene_ensembl"},
+    \code{"dmelanogaster_gene_ensembl"}, \code{"tnigroviridis_gene_ensembl"},
     etc in the ensembl database.
     See the examples section below for how to discover which datasets
     are available in a given BioMart database.}
@@ -155,14 +155,16 @@ getChromInfoFromBiomart(biomart="ENSEMBL_MART_ENSEMBL",
 ## We can use listDatasets() from the biomaRt package to list the
 ## datasets available in the "ENSEMBL_MART_ENSEMBL" BioMart database:
 library(biomaRt)
-listMarts(host="https://www.ensembl.org")
-mart <- useEnsembl(biomart="ENSEMBL_MART_ENSEMBL", host="https://www.ensembl.org")
+listMarts()
+mart <- useEnsembl("ENSEMBL_MART_ENSEMBL")
 datasets <- listDatasets(mart)
 head(datasets)
-subset(datasets, grepl("elegans", dataset, ignore.case=TRUE))
 
-## Retrieve the full transcript dataset for Worm:
-txdb1 <- makeTxDbFromBiomart(dataset="celegans_gene_ensembl")
+## Find dataset for Tetraodon nigroviridis genes:
+subset(datasets, grepl("nigroviridis", dataset, ignore.case=TRUE))
+
+## Retrieve the full transcript dataset for Tetraodon nigroviridis:
+txdb1 <- makeTxDbFromBiomart(dataset="tnigroviridis_gene_ensembl")
 txdb1
 
 ## Retrieve an incomplete transcript dataset for Human:
@@ -217,14 +219,6 @@ yeast_txdb
                                    dataset="celegans_eg_gene",
                                    host="https://metazoa.ensembl.org")
   worm_txdb
-
-  ## Note that even if the dataset for Worm on Ensembl Metazoa contains
-  ## the same transcript as on the main Ensembl database, the transcript
-  ## type might be annotated with slightly different terms (e.g. antisense
-  ## vs antisense_RNA):
-  filter <- list(tx_name="Y71G12B.44")
-  transcripts(worm_txdb, filter=filter, columns=c("tx_name", "tx_type"))
-  transcripts(txdb1, filter=filter, columns=c("tx_name", "tx_type"))
 }
 ## ----------------------
 ## --- Ensembl Plants ---
