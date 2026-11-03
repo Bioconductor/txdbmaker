@@ -113,6 +113,10 @@ makeTxDbFromEnsembl(organism="Homo sapiens",
 }
 
 \examples{
+## ---------------------------------------------------------------------
+## Making a TxDb object for a vertebrate Ensembl organism
+## ---------------------------------------------------------------------
+
 ## Note that, right after a new Ensembl release, it can take up to 24 or
 ## 48 hours for the MySQL server at useastdb.ensembl.org to get updated
 ## with the new release. During that period, the server will be out-of-sync
@@ -122,21 +126,40 @@ makeTxDbFromEnsembl(organism="Homo sapiens",
 ## To avoid running into this issue in the context of this example, we
 ## first try useastdb.ensembl.org, and, if it fails, we fall back to
 ## ensembldb.ensembl.org.
-txdb1 <- try(makeTxDbFromEnsembl("Saccharomyces cerevisiae",
+
+txdb1 <- try(makeTxDbFromEnsembl("Tetraodon nigroviridis",
                                  server="useastdb.ensembl.org"))
+
 if (inherits(txdb1, "try-error")) {
-    txdb1 <- try(makeTxDbFromEnsembl("Saccharomyces cerevisiae",
+    txdb1 <- try(makeTxDbFromEnsembl("Tetraodon nigroviridis",
                                      server="ensembldb.ensembl.org"))
 }
+
 txdb1
 
-## Remember to supply 'kingdom', 'server', and 'port' when the organism
-## is not a vertebrate (see 'kingdom' argument above):
+## ---------------------------------------------------------------------
+## Making a TxDb object for a non-vertebrate Ensembl organism
+## ---------------------------------------------------------------------
+
+## IMPORTANT: Remember to supply 'kingdom', 'server', and 'port' when
+## the organism is not a vertebrate (see 'kingdom' argument above).
+
+## Querying mysql-eg-publicsql.ebi.ac.uk can be very slow, depending on
+## your location!
 \donttest{
-## Can be very slow, depending on your location!
-txdb2 <- makeTxDbFromEnsembl("Arabidopsis thaliana", kingdom="plants",
+txdb2 <- makeTxDbFromEnsembl("Saccharomyces cerevisiae", kingdom="fungi",
                              server="mysql-eg-publicsql.ebi.ac.uk",
                              port=4157)
 txdb2
+
+txdb3 <- makeTxDbFromEnsembl("Caenorhabditis elegans", kingdom="metazoa",
+                             server="mysql-eg-publicsql.ebi.ac.uk",
+                             port=4157)
+txdb3
+
+txdb4 <- makeTxDbFromEnsembl("Arabidopsis thaliana", kingdom="plants",
+                             server="mysql-eg-publicsql.ebi.ac.uk",
+                             port=4157)
+txdb4
 }
 }
