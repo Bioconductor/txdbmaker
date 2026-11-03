@@ -18,7 +18,7 @@
 
 \usage{
 makeTxDbFromEnsembl(organism="Homo sapiens",
-                    release=NA,
+                    release=NA, kingdom=NA,
                     circ_seqs=NULL,
                     server="ensembldb.ensembl.org",
                     username="anonymous", password=NULL, port=0L,
@@ -37,6 +37,14 @@ makeTxDbFromEnsembl(organism="Homo sapiens",
     The Ensembl release to query e.g. 89. If set to \code{NA} (the default),
     the current release is used.
   }
+  \item{kingdom}{
+    For non-vertebrates (e.g. Arabidopsis thaliana), the kingdom must be
+    specified (e.g. \code{"plants"}). Must be one of \code{"bacteria"},
+    \code{"fungi"}, \code{"metazoa"}, \code{"plants"}, and \code{"protists"}.
+    Note that, when specifying a non-vertebrate kingdom, server must be
+    set to \code{"mysql-eg-publicsql.ebi.ac.uk"} and \code{port} to 4157.
+    See \code{server} argument below.
+  }
   \item{circ_seqs}{
     A character vector to list out which chromosomes should be marked
     as circular.
@@ -45,7 +53,12 @@ makeTxDbFromEnsembl(organism="Homo sapiens",
     The name of the MySQL server to query.
     See \url{https://www.ensembl.org/info/data/mysql.html} for the list of
     Ensembl public MySQL servers.
-    Make sure to use the server nearest to you. It can make a big difference!
+    Note that an updated list of Ensembl public MySQL servers was published
+    more recently (in June 2026) here:
+    \url{https://www.ensembl.info/2026/06/02/ensembl-mysql-services-will-be-upgraded-to-mysql-8-soon/}.
+
+    Make sure to use the server that is nearest to you as it can make a big
+    difference in terms of speed of data transfer!
   }
   \item{username}{
     Login username for the MySQL server.
@@ -103,17 +116,27 @@ makeTxDbFromEnsembl(organism="Homo sapiens",
 ## Note that, right after a new Ensembl release, it can take up to 24 or
 ## 48 hours for the MySQL server at useastdb.ensembl.org to get updated
 ## with the new release. During that period, the server will be out-of-sync
-## with the content at https://ftp.ensembl.org/pub/current_mysql/, which
+## with the content at https://ftp.ensembl.org/pub/current/mysql/, which
 ## can cause makeTxDbFromEnsembl() to fail with an error like:
 ##   Error: Failed to connect: Unknown database 'some_organism_core_114_4'
 ## To avoid running into this issue in the context of this example, we
 ## first try useastdb.ensembl.org, and, if it fails, we fall back to
 ## ensembldb.ensembl.org.
-txdb <- try(makeTxDbFromEnsembl("Saccharomyces cerevisiae",
-                                server="useastdb.ensembl.org"))
-if (inherits(txdb, "try-error")) {
-    txdb <- try(makeTxDbFromEnsembl("Saccharomyces cerevisiae",
-                                    server="ensembldb.ensembl.org"))
+txdb1 <- try(makeTxDbFromEnsembl("Saccharomyces cerevisiae",
+                                 server="useastdb.ensembl.org"))
+if (inherits(txdb1, "try-error")) {
+    txdb1 <- try(makeTxDbFromEnsembl("Saccharomyces cerevisiae",
+                                     server="ensembldb.ensembl.org"))
 }
-txdb
+txdb1
+
+## Remember to supply 'kingdom', 'server', and 'port' when the organism
+## is not a vertebrate (see 'kingdom' argument above):
+\donttest{
+## Can be very slow, depending on your location!
+txdb2 <- makeTxDbFromEnsembl("Arabidopsis thaliana", kingdom="plants",
+                             server="mysql-eg-publicsql.ebi.ac.uk",
+                             port=4157)
+txdb2
+}
 }

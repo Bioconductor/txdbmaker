@@ -263,7 +263,6 @@ tgondii_txdb
 ## be different! We can check this with listMarts() from the biomaRt
 ## package:
 if (interactive()) {
-
   listMarts(host="https://useast.ensembl.org")
 
   txdb3 <- makeTxDbFromBiomart(biomart="ENSEMBL_MART_ENSEMBL",

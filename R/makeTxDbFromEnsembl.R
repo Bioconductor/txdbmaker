@@ -21,10 +21,10 @@
 .dbname2release <- function(dbname)
     as.integer(gsub("^.*_core_([0-9]+)_.*$", "\\1", dbname))
 
-.lookup_dbname <- function(organism, release=NA)
+.lookup_dbname <- function(organism, release=NA, kingdom=NA)
 {
     organism <- .normarg_organism(organism)
-    mysql_url <- ftp_url_to_Ensembl_mysql(release)
+    mysql_url <- ftp_url_to_Ensembl_mysql(release, kingdom=kingdom)
     core_dirs <- Ensembl_listMySQLCoreDirs(mysql_url, release=release)
     prefix <- paste0(gsub(" ", "_", tolower(organism), fixed=TRUE), "_core_")
     i <- match(prefix, substr(core_dirs, 1L, nchar(prefix)))
@@ -305,7 +305,7 @@
 ### Always set 'server' to "useastdb.ensembl.org" in the examples so that
 ### they run fast on the build machines (which are located on the East Coast).
 makeTxDbFromEnsembl <- function(organism="Homo sapiens",
-                                release=NA,
+                                release=NA, kingdom=NA,
                                 circ_seqs=NULL,
                                 server="ensembldb.ensembl.org",
                                 username="anonymous", password=NULL,
@@ -313,7 +313,7 @@ makeTxDbFromEnsembl <- function(organism="Homo sapiens",
 {
     S4Vectors:::load_package_gracefully("RMariaDB", "in order to ",
                                         "use makeTxDbFromEnsembl()")
-    dbname <- .lookup_dbname(organism, release=release)
+    dbname <- .lookup_dbname(organism, release=release, kingdom=kingdom)
     dbconn <- dbConnect(RMariaDB::MariaDB(), dbname=dbname,
                         host=server, username=username, password=password,
                         port=port)

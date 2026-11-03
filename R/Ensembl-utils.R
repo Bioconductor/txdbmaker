@@ -46,13 +46,15 @@
 ftp_url_to_Ensembl_mysql <- function(release=NA, use.grch37=FALSE, kingdom=NA)
 {
     release <- .normarg_release(release)
+    if (!isSingleStringOrNA(kingdom))
+        stop(wmsg("'kingdom' must be a single string or NA"))
     if (is.na(kingdom)) {
         if (is.na(release)) {
-            if (use.grch37) {
+            #if (use.grch37) {
                 pub_subdir <- "current/mysql"
-            } else {
-                pub_subdir <- "current_mysql"
-            }
+            #} else {
+            #    pub_subdir <- "current_mysql"
+            #}
         } else {
             pub_subdir <- paste0("release-", release, "/mysql")
         }
@@ -61,6 +63,8 @@ ftp_url_to_Ensembl_mysql <- function(release=NA, use.grch37=FALSE, kingdom=NA)
         else
             pub_ftp_url <- .ENSEMBL.PUB_FTP_URL
     } else {
+        choices <- c("bacteria", "fungi", "metazoa", "plants", "protists")
+        kingdom <- match.arg(kingdom, choices)
         pub_ftp_url <- paste0(.ENSEMBLGENOMES.PUB_FTP_URL, kingdom, "/")
         if (is.na(release)) {
             pub_subdir <- "current"
