@@ -130,6 +130,10 @@ browseUCSCtrack(genome="hg19", tablename="knownGene",
 }
 
 \examples{
+## ---------------------------------------------------------------------
+## supportedUCSCtables()
+## ---------------------------------------------------------------------
+
 ## Use list_UCSC_genomes() to obtain the list of all UCSC genomes:
 library(UCSC.utils)
 list_UCSC_genomes()[ , "genome"]
@@ -141,20 +145,36 @@ list_UCSC_genomes("human")
 supportedUCSCtables("hg38")
 supportedUCSCtables("hg19")
 
-## Open the UCSC track page for a given organism/table:
+## ---------------------------------------------------------------------
+## browseUCSCtrack()
+## ---------------------------------------------------------------------
+
+## Open the UCSC track page for a given organism/table to get information
+## about a given track:
 browseUCSCtrack("hg38", tablename="knownGene")
 browseUCSCtrack("hg19", tablename="knownGene")
 
 browseUCSCtrack("hg38", tablename="ncbiRefSeqSelect")
 browseUCSCtrack("hg19", tablename="ncbiRefSeqSelect")
 
+browseUCSCtrack("hg38", tablename="lincRNAsTranscripts")
+browseUCSCtrack("hg19", tablename="lincRNAsTranscripts")
+
 browseUCSCtrack("hg19", tablename="pseudoYale60")
 
 browseUCSCtrack("sacCer3", tablename="ensGene")
 
-## Retrieve a full transcript dataset for Yeast from UCSC:
-txdb1 <- makeTxDbFromUCSC("sacCer3", tablename="ensGene")
+## ---------------------------------------------------------------------
+## makeTxDbFromUCSC()
+## ---------------------------------------------------------------------
+
+## Retrieve a full transcript dataset for Human:
+txdb1 <- makeTxDbFromUCSC("hg19", tablename="lincRNAsTranscripts")
 txdb1
+
+## Retrieve a full transcript dataset for Yeast:
+txdb2 <- makeTxDbFromUCSC("sacCer3", tablename="ensGene")
+txdb2
 
 ## Retrieve an incomplete transcript dataset for Mouse from UCSC (only
 ## transcripts linked to Entrez Gene ID 22290):
@@ -166,7 +186,7 @@ transcript_ids <- c(
     "uc009uzj.1"
 )
 
-txdb2 <- makeTxDbFromUCSC("mm10", tablename="knownGene",
+txdb3 <- makeTxDbFromUCSC("mm10", tablename="knownGene",
                           transcript_ids=transcript_ids)
-txdb2
+txdb3
 }

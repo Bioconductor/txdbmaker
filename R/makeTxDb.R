@@ -6,11 +6,12 @@
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### 1st group of helper functions for makeTxDb()
 ###
-### 4 functions to check and normalize the input of makeTxDb():
-###   o .makeTxDb_normarg_transcripts()
-###   o .makeTxDb_normarg_splicings()
-###   o .makeTxDb_normarg_genes()
-###   o .makeTxDb_normarg_chrominfo()
+### 5 functions to check and normalize the input of makeTxDb():
+###   o .normarg_makeTxDb_transcripts()
+###   o .normarg_makeTxDb_splicings()
+###   o .normarg_makeTxDb_genes()
+###   o .normarg_makeTxDb_chrominfo()
+###   o .normarg_makeTxDb_metadata()
 ### 1 function to infer the chrominfo table:
 ###   o .infer_chrominfo_from_transcripts_and_splicings
 
@@ -57,7 +58,7 @@
                   "be present in '", referred_colname, "'"))
 }
 
-.makeTxDb_normarg_transcripts <- function(transcripts)
+.normarg_makeTxDb_transcripts <- function(transcripts)
 {
     .REQUIRED_COLS <- c("tx_id", "tx_chrom", "tx_strand", "tx_start", "tx_end")
     .OPTIONAL_COLS <- c("tx_name", "tx_type", "gene_id")
@@ -115,7 +116,7 @@
     transcripts
 }
 
-.makeTxDb_normarg_splicings <- function(splicings, transcripts_tx_id)
+.normarg_makeTxDb_splicings <- function(splicings, transcripts_tx_id)
 {
     .REQUIRED_COLS <- c("tx_id", "exon_rank", "exon_start", "exon_end")
     .OPTIONAL_COLS <- c("exon_id", "exon_name", "exon_chrom", "exon_strand",
@@ -243,7 +244,7 @@
     splicings
 }
 
-.makeTxDb_normarg_genes <- function(genes, transcripts_tx_id,
+.normarg_makeTxDb_genes <- function(genes, transcripts_tx_id,
                                     transcripts_tx_name=NULL)
 {
     if (is.null(genes)) {
@@ -280,7 +281,7 @@
     genes
 }
 
-.makeTxDb_normarg_chrominfo <- function(chrominfo)
+.normarg_makeTxDb_chrominfo <- function(chrominfo)
 {
     .REQUIRED_COLS <- c("chrom", "length")
     .OPTIONAL_COLS <- c("is_circular", "genome")
@@ -307,12 +308,13 @@
         stop(wmsg("'chrominfo$is_circular' must be a logical vector"))
     }
     ## Check 'genome'.
-    if (!has_col(chrominfo, "genome")) {
-        warning(wmsg("genome version information ",
-                     "is not available for this TxDb object"))
-        chrominfo$genome <- rep.int(NA, nrow(chrominfo))
-    } else if (!is.character(chrominfo$genome)) {
-        stop(wmsg("'chrominfo$genome' must be a character vector"))
+    if (has_col(chrominfo, "genome")) {
+        if (!(is.character(chrominfo$genome) || is.factor(chrominfo$genome)))
+            stop(wmsg("'chrominfo$genome' must be a ",
+                      "character vector or factor"))
+        genome <- unique(chrominfo$genome)
+        if (length(genome) != 1L)
+            stop(wmsg("'chrominfo$genome' must contain a unique value"))
     }
     chrominfo
 }
@@ -332,6 +334,44 @@
         is_circular=rep.int(NA, length(chrom)),
         check.names=FALSE, stringsAsFactors=FALSE
     )
+}
+
+### 'genome' must be NULL or 'chrominfo$genome'.
+.normarg_makeTxDb_metadata <- function(metadata, genome=NULL)
+{
+    ## If 'metadata' is NULL or has no Genome entry or has a Genome entry
+    ## with an NA value, then we try to extract the Genome value from 'genome'.
+    if (is.null(metadata)) {
+        no_Genome <- TRUE
+    } else {
+        .REQUIRED_COLS <- c("name", "value")
+        check_colnames(metadata, .REQUIRED_COLS, x_what="metadata")
+        ## Keep required columns only and put them in name/value order in case
+        ## they were not (this is important for the rbind() op below and other
+        ## rbind() ops that happen later in .write_metadata_table()).
+        metadata <- metadata[.REQUIRED_COLS]
+        idx <- match("Genome", metadata$name)
+        no_Genome <- is.na(idx) || is.na(metadata$value[idx])
+    }
+    if (no_Genome) {
+        if (!is.null(genome)) {
+            ## Extract Genome from 'genome'.
+            genome <- unique(genome)
+            ## We already made sure that this has length 1 when we
+            ## checked 'chrominfo$genome' in .normarg_makeTxDb_chrominfo()
+            ## above.
+            stopifnot(length(genome) == 1L)
+            if (!is.na(genome)) {
+                metadata <- rbind(metadata,
+                                  data.frame(name="Genome", value=genome))
+                no_Genome <- FALSE
+            }
+        }
+        if (no_Genome)
+            warning(wmsg("genome assembly is not ",
+                         "available for this TxDb object"))
+    }
+    metadata
 }
 
 
@@ -493,6 +533,7 @@
     insert_data_into_table(conn, "gene", data)
 }
 
+### 'metadata' can be NULL.
 .write_metadata_table <- function(conn, metadata)
 {
     nb_transcripts <- dbEasyQuery(conn,
@@ -614,8 +655,8 @@ makeTxDb <- function(transcripts, splicings,
         stop(wmsg("'reassign.ids' must be TRUE or FALSE"))
     on.foreign.transcripts <- match.arg(on.foreign.transcripts)
 
-    transcripts <- .makeTxDb_normarg_transcripts(transcripts)
-    splicings <- .makeTxDb_normarg_splicings(splicings, transcripts$tx_id)
+    transcripts <- .normarg_makeTxDb_transcripts(transcripts)
+    splicings <- .normarg_makeTxDb_splicings(splicings, transcripts$tx_id)
     if (has_col(transcripts, "gene_id")) {
         if (!is.null(genes))
             stop(wmsg("'genes' must be NULL when 'transcripts' ",
@@ -623,7 +664,7 @@ makeTxDb <- function(transcripts, splicings,
         genes <- transcripts[!is.na(transcripts$gene_id),
                              c("tx_id", "gene_id")]
     } else {
-        genes <- .makeTxDb_normarg_genes(genes, transcripts$tx_id,
+        genes <- .normarg_makeTxDb_genes(genes, transcripts$tx_id,
                                    transcripts_tx_name=transcripts$tx_name)
     }
     if (is.null(chrominfo)) {
@@ -631,7 +672,7 @@ makeTxDb <- function(transcripts, splicings,
                          transcripts$tx_chrom,
                          splicings$exon_chrom)
     } else {
-        chrominfo <- .makeTxDb_normarg_chrominfo(chrominfo)
+        chrominfo <- .normarg_makeTxDb_chrominfo(chrominfo)
         ## Look for "foreign transcripts" i.e. for transcripts that are on
         ## sequences not in 'chrominfo'.
         ok <- transcripts$tx_chrom %in% chrominfo$chrom
@@ -664,6 +705,8 @@ makeTxDb <- function(transcripts, splicings,
             }
         }
     }
+    metadata <- .normarg_makeTxDb_metadata(metadata, chrominfo$genome)
+
     transcripts_internal_tx_id <- .make_transcripts_internal_tx_id(
                                              transcripts,
                                              reassign.ids,
@@ -703,17 +746,6 @@ makeTxDb <- function(transcripts, splicings,
                           splicings_internal_cds_id,
                           splicings$cds_phase)
     .write_gene_table(conn, genes$gene_id, genes_internal_tx_id)
-    ## If input metadata has no specified genome and it is
-    ## available in 'chrominfo', try to fetch it from there
-    if (!"Genome" %in% metadata$name && !is.null(chrominfo$genome)) {
-        genome <- unique(chrominfo$genome)
-        if (length(genome) == 1L) { ## only if no conflicting genomes
-            if (is.null(metadata))
-                metadata <- data.frame(name="Genome", value=genome)
-            else if (identical(colnames(metadata), c("name", "value")))
-                metadata <- rbind(metadata, c("Genome", genome))
-        }
-    }
     .write_metadata_table(conn, metadata)  # must come last!
     GenomicFeatures:::TxDb(conn)
 }

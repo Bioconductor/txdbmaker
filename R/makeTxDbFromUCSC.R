@@ -18,8 +18,8 @@
     exonEnds="list"       # list of raw vectors
 )
 
-### We support all tables in the "genes" group of type "genePred" or
-### "bigGenePred" (or any other "*genePred" type).
+### We support all tables in the "genes" (or NA) group of type "genePred"
+### or "bigGenePred" (or any other "*genePred" type).
 ### This is because tables of other types like "bed 3" or "psl" don't have
 ### the expected columns.
 ### Returns a data.frame with 1 row per supported table and 3 columns:
@@ -28,12 +28,13 @@ supportedUCSCtables <- function(genome="hg19")
 {
     if (!isSingleString(genome))
         stop(wmsg("'genome' must be a single string"))
-    df <- list_UCSC_tracks(genome, group="genes")
+    df <- list_UCSC_tracks(genome)
     expected_colnames <- c("track", "primary_table", "type",
                            "group", "composite_track")
     stopifnot(identical(colnames(df), expected_colnames))
-    keep_idx <- grep("genePred\\>", df$type, ignore.case=TRUE)
-    df <- S4Vectors:::extract_data_frame_rows(df, keep_idx)
+    keep_me <- df$group %in% c("genes", NA) &
+               grepl("genePred\\>", df$type, ignore.case=TRUE)
+    df <- S4Vectors:::extract_data_frame_rows(df, keep_me)
     ans <- df[ , c(2:1, 5L)]
     colnames(ans)[[1L]] <- "tablename"
     ans
@@ -588,8 +589,8 @@ browseUCSCtrack <- function(genome="hg19",
                                    warning_tip2=warning_tip2)
     ## Prepare the data frame that will be passed to the 'chrominfo' argument
     ## of makeTxDb(). Note that the naming convention for the columns in this
-    ## data frame differs from what's used in the data frame returned by
-    ## get_and_fix_chrom_info_from_UCSC().
+    ## data frame differs slightly from what's used in the data frame returned
+    ## by get_and_fix_chrom_info_from_UCSC().
     ans <- data.frame(
         chrom=chrominfo[ , "chrom"],
         length=chrominfo[ , "size"],

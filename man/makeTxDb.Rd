@@ -187,6 +187,9 @@ makeTxDb(transcripts, splicings, genes=NULL,
 
     \item \code{is_circular}: [optional] Chromosome circularity flag.
           Logical vector. NAs are ok.
+
+    \item \code{genome}: [optional] The name of the genome assembly.
+          Character vector (or factor) that contains a unique value.
   }
   Other columns, if any, are ignored (with a warning).
 }
