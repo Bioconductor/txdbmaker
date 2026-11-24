@@ -1,3 +1,21 @@
+VERSION 1.10.0
+--------------
+
+NEW FEATURES
+
+    o Add 'kingdom' argument to makeTxDbFromEnsembl().
+
+    o makeTxDbFromUCSC("hg19", tablename="lincRNAsTranscripts") now is
+      supported.
+
+BUG FIXES
+
+    o Small fix to supportedUCSCtables().
+
+    o Get rid of 'makeTxDbFromUCSC()' spurious warning "genome version
+      information is not available for this TxDb object".
+
+
 VERSION 1.8.0
 -------------
 
